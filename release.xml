@@ -1,0 +1,28 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+
+  <id>package-release</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <files>
+    <file>
+      <source>${project.build.directory}/${project.build.finalName}.jar</source>
+      <destName>TwisterSister.bwextension</destName>
+    </file>
+    <file>
+      <source>resources/TwisterSister.mfs</source>
+    </file>
+    <file>
+      <source>resources/SpecificDeviceSettings.toml</source>
+    </file>
+    <file>
+      <source>resources/README.txt</source>
+    </file>
+    <file>
+      <source>LICENSE</source>
+    </file>
+  </files>
+</assembly>

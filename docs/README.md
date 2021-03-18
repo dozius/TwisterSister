@@ -1,0 +1,202 @@
+# Twister Sister <!-- omit in toc -->
+
+A Bitwig Studio controller extension for the
+[DJ TechTools MIDI Fighter Twister](https://www.midifighter.com/#Twister).
+
+## Table of Contents <!-- omit in toc -->
+
+- [Installation](#installation)
+- [Hardware](#hardware)
+  - [Track & Device Bank (Bank 1)](#track--device-bank-bank-1)
+    - [Notes](#notes)
+  - [User Mappable Bank (Bank 2-4)](#user-mappable-bank-bank-2-4)
+  - [Side Buttons](#side-buttons)
+- [Options](#options)
+  - [Show Bank Popup](#show-bank-popup)
+  - [Device Row Color](#device-row-color)
+  - [Global Fine Sensitivity](#global-fine-sensitivity)
+- [Project Settings](#project-settings)
+  - [User Mappable Knob Colors](#user-mappable-knob-colors)
+- [Specific Device Settings](#specific-device-settings)
+  - [Devices](#devices)
+  - [Controls](#controls)
+  - [Finding IDs](#finding-ids)
+
+## Installation
+
+1. Extract the zip file.
+
+2. Load the Twister Sister settings into your MIDI Fighter Twister.
+
+    1. Open the MIDI Fighter Utility and ensure your device is connected.
+    2. Click `File -> Import Settings...` and select the file `TwisterSister.mfs`.
+    3. Click `SEND TO MIDI FIGHTER`.
+
+3. Copy `TwisterSister.bwextension` and `SpecificDeviceSettings.toml` to the following location:
+
+    - Windows: `%USERPROFILE%/Documents/Bitwig Studio/Extensions`
+    - Mac:     `~/Documents/Bitwig Studio/Extensions`
+    - Linux:   `~/Bitwig Studio/Extensions`
+
+4. Add your controller in Bitwig Studio.
+
+    1. Open Bitwig Studio and navigate to `Settings -> Controller` in the dashboard.
+
+    2. If auto-detection works then the device will automatically be added and you can skip the
+       remaining steps.
+
+    3. If auto-detection has failed then click on `+ Add Controller` then select `DJ TechTools` from
+       the hardware vendor drop down, `Twister Sister` in the product list and click `Add`.  
+       ![add-device](images/add-device.png)
+
+    4. If your controller is not automatically added to the MIDI in and out ports then select them
+       manually. Once both ports have a device assigned the extension will activate.  
+       ![midi-io](images/midi-io.png)
+
+## Hardware
+
+![hardware](images/hardware.png)
+
+### Track & Device Bank (Bank 1)
+
+| Knob | Twist                       | Click                     | Double Click    | Long Press                | RGB Light            |
+| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | -------------------- |
+| 1    | Select track                | Toggle mute               | -               | Toggle arm                | Follow track color   |
+| 2    | Track volume                | Toggle fine sensitivity   | Reset volume    | Toggle Solo               | Follow track color   |
+| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | -                         | Follow track color   |
+| 4    | Current send volume         | Cycle through track sends | -               | -                         | Follow send color    |
+| 5    | Select device               | Toggle enable             | -               | Toggle expand             | Device row color     |
+| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls | Device row color     |
+| 7    | Specific device parameter 1 | Toggle fine sensitivity   | Reset parameter | Insert device before      | Device row color     |
+| 8    | Specific device parameter 2 | Toggle fine sensitivity   | Reset parameter | Insert device after       | Device row color     |
+| 9-16 | Remote control parameter    | Toggle fine sensitivity   | Reset parameter | -                         | Remote control color |
+
+#### Notes
+
+- The color palette on the Twister is very limited. Colors are matched as closely as possible.
+
+- If a device or parameter does not exist in the current context then the corresponding lights will
+  be off.
+
+- See the section on [specific device settings](#Specific-Device-Settings) for information on
+  configuring knobs 7 and 8.
+
+### User Mappable Bank (Bank 2-4)
+
+| Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
+| ---- | ------------------- | --------------- | ----------------- | --------------- |
+| 1-16 | Mapped parameter(s) | Set light color | Reset light color | User selectable |
+
+### Side Buttons
+
+These are the settings provided by `TwisterSister.mfs`. The extension does not use the side buttons
+in any way, so these can be changed to whatever you prefer in the MIDI Fighter Utility.
+
+| Button       | Function      |
+| ------------ | ------------- |
+| Left Side 1  | CC Hold       |
+| Left Side 2  | CC Hold       |
+| Left Side 3  | CC Hold       |
+| Right Side 1 | Previous Bank |
+| Right Side 2 | Next Bank     |
+| Right Side 3 | Bank 1        |
+
+## Options
+
+These are global options that apply to the specific device across all projects. They are accessed in
+the controller settings in the Bitwig Studio dashboard.
+
+![options](images/options.png)
+
+### Show Bank Popup
+
+Enable/disable showing a popup notification when banks are changed.
+
+### Device Row Color
+
+Sets the color used for knobs 5-8 in the [track & device bank](#Track-&-Device-Bank-(Bank-1)). This
+uses the same color values as the [user mappable knobs](#User-Mappable-Knob-Colors).
+
+### Global Fine Sensitivity
+
+Sets the fine sensitivity factor for all encoder controls. The lower the number, the finer the
+movement.
+
+## Project Settings
+
+These are per project settings and will be saved with each project. They are accessed in the I/O
+panel of Bitwig Studio.
+
+![project-settings](images/project-settings.png)
+
+### User Mappable Knob Colors
+
+Show or hide the settings for each bank using the bank selector. Each knob can have it's color set
+to one of the 125¹ colors supported by the Twister. A value of 0 will turn the light off.
+
+These settings can also be changed by holding and twisting any of the user mappable knobs.
+
+_¹ This should be 126 colors but there is a
+[bug](https://github.com/DJ-TechTools/Midi_Fighter_Twister_Open_Source/issues/9) in the latest
+software._
+
+## Specific Device Settings
+
+The specific device feature allows you to assign two device specific parameters to knobs 7 and 8 in
+the [track & device bank](#Track-&-Device-Bank-(Bank-1)). These follow the selected device.
+
+The settings file `SpecificDeviceSettings.toml` allows you to configure which parameters for which
+devices will be assigned. The file is in [TOML](https://toml.io) format.
+
+### Devices
+
+Devices are added to the settings file into one of three table arrays.
+
+- `bitwig` for Bitwig Studio devices
+- `vst3` for VST3 devices
+- `vst2` for VST2 devices
+
+Each table in the array consists of an `id` key and a `params` table that contains any number of
+parameter ID keys. The type of the ID and parameters is different for each of the three types.
+
+| Device Type | ID Type     | Parameter Type |
+| ----------- | ----------- | -------------- |
+| Bitwig      | UUID String | String         |
+| VST3        | String      | Integer        |
+| VST2        | Integer     | Integer        |
+
+See the included `SpecificDeviceSettings.toml` file for examples.
+
+### Controls
+
+The `controls` table contains two string arrays, `knob1` and `knob2`. The strings in these arrays
+are the device parameter key names that will be assigned to the respective knob in the
+[track & device bank](#Track-&-Device-Bank-(Bank-1)).
+
+For example, inserting the string `"mix"` into the array will assign any parameters defined with a
+key `mix` to that knob.
+
+See the included `SpecificDeviceSettings.toml` file for examples.
+
+### Finding IDs
+
+In order to retreive IDs for devices and their parameters you must add a configuration option to
+Bitwig Studio.
+
+1. Create a file with the name `config.json` in your user settings directory. The location of this
+   directory is platform dependent:
+
+    - Windows: `%LOCALAPPDATA%/Bitwig Studio`
+    - Mac:     `Library/Application Support/Bitwig/Bitwig Studio`
+    - Linux:   `~/.BitwigStudio`
+
+2. Add the following line to the `config.json` file: `can-copy-device-and-param-ids: true`
+
+3. Restart Bitwig Studio
+
+Once you have this setting in place, you can retreive IDs from the context menu of the device and
+parameters.
+
+![device-id](images/device-id.png)
+
+![param-id](images/param-id.png)
