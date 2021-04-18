@@ -129,10 +129,10 @@ public class TwisterSisterExtension extends ControllerExtension
         return userProfile + "/Documents/Bitwig Studio/Extensions/" + file;
 
       case MAC:
-        return "~/Documents/Bitwig Studio/Extensions/" + file;
+        return System.getProperty("user.home") + "/Documents/Bitwig Studio/Extensions/" + file;
 
       case LINUX:
-        return "~/Bitwig Studio/Extensions/" + file;
+        return System.getProperty("user.home") + "/Bitwig Studio/Extensions/" + file;
 
       default:
         throw new IllegalArgumentException("Unknown Platform");
