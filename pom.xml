@@ -34,7 +34,7 @@
         </os>
       </activation>
       <properties>
-        <bitwig.extension.directory>~/Documents/Bitwig Studio/Extensions</bitwig.extension.directory>
+        <bitwig.extension.directory>${env.HOME}/Documents/Bitwig Studio/Extensions</bitwig.extension.directory>
       </properties>
     </profile>
     <profile>
