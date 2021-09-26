@@ -236,8 +236,11 @@ public class TwisterSisterExtension extends ControllerExtension
     final TwisterKnob[] knobs = twister.banks[0].knobs;
     final SendBank sendBank = cursorTrack.sendBank();
     final Send send = sendBank.getItemAt(0);
+    final PinnableCursorDevice cursorDevice = cursorTrack.createCursorDevice();
 
     cursorTrack.color().markInterested();
+    cursorTrack.isPinned().markInterested();
+    cursorDevice.isPinned().markInterested();
     sendBank.canScrollForwards().markInterested();
     sendBank.itemCount().markInterested();
     send.sendChannelColor().markInterested();
@@ -260,15 +263,28 @@ public class TwisterSisterExtension extends ControllerExtension
     final TwisterKnob panKnob = knobs[2];
     panKnob.setBinding(cursorTrack.pan());
     panKnob.ringLight().observeValue(cursorTrack.pan().value());
-    panKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    panKnob.rgbLight().setColorSupplier(() -> {
+      boolean track = cursorTrack.isPinned().get();
+      boolean device = cursorDevice.isPinned().get();
+      if (!track && !device)
+        return TwisterColors.ALL.get(0);
+      else if (track && !device)
+        return TwisterColors.BITWIG_PARAMETERS.get(0);
+      else if (!track && device)
+        return TwisterColors.BITWIG_PARAMETERS.get(2);
+      else
+        return TwisterColors.BITWIG_PARAMETERS.get(3);
+    });
     panKnob.button().addClickedObserver(panKnob::toggleSensitivity);
     panKnob.button().addDoubleClickedObserver(cursorTrack.pan()::reset);
+    panKnob.button().addLongPressedObserver(cursorTrack.isPinned()::toggle);
 
     final TwisterKnob sendKnob = knobs[3];
     sendKnob.setBinding(send);
     sendKnob.ringLight().observeValue(send.value());
     sendKnob.rgbLight().setColorSupplier(send.sendChannelColor());
     sendKnob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    sendKnob.button().addLongPressedObserver(cursorDevice.isPinned()::toggle);
   }
 
   /** Sets up all the device related knobs. Selection, remote control page, etc. */

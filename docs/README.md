@@ -63,8 +63,8 @@ A Bitwig Studio controller extension for the
 | ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | -------------------- |
 | 1    | Select track                | Toggle mute               | -               | Toggle arm                | Follow track color   |
 | 2    | Track volume                | Toggle fine sensitivity   | Reset volume    | Toggle Solo               | Follow track color   |
-| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | -                         | Follow track color   |
-| 4    | Current send volume         | Cycle through track sends | -               | -                         | Follow send color    |
+| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | Toggle track pinning      | Pinned status        |
+| 4    | Current send volume         | Cycle through track sends | -               | Toggle device pinning     | Follow send color    |
 | 5    | Select device               | Toggle enable             | -               | Toggle expand             | Device row color     |
 | 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls | Device row color     |
 | 7    | Specific device parameter 1 | Toggle fine sensitivity   | Reset parameter | Insert device before      | Device row color     |
@@ -74,6 +74,12 @@ A Bitwig Studio controller extension for the
 #### Notes
 
 - The color palette on the Twister is very limited. Colors are matched as closely as possible.
+
+- Pinned colors:
+  - OFF: nothing
+  - RED: track is pinned
+  - YELLOW: device is pinned
+  - GREEN: both track and device are pinned
 
 - If a device or parameter does not exist in the current context then the corresponding lights will
   be off.
