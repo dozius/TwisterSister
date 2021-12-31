@@ -47,6 +47,7 @@ import io.github.dozius.settings.AbstractDeviceSetting;
 import io.github.dozius.settings.UserColorSettings;
 import io.github.dozius.settings.SpecificDeviceSettings;
 import io.github.dozius.twister.Twister;
+import io.github.dozius.twister.TwisterButton;
 import io.github.dozius.twister.TwisterColors;
 import io.github.dozius.twister.TwisterKnob;
 import io.github.dozius.util.CursorNormalizedValue;
@@ -91,8 +92,10 @@ public class TwisterSisterExtension extends ControllerExtension
     deviceSpecific2ColorSupplier = new OnOffColorSupplier();
 
     loadPreferences();
+
     setupTrackBank();
     setupUserBanks();
+    setupBankButtons();
 
     twister.setActiveBank(0);
   }
@@ -191,6 +194,18 @@ public class TwisterSisterExtension extends ControllerExtension
       for (TwisterKnob knob : bank.knobs) {
         knob.setFineSensitivity(factor);
       }
+    }
+  }
+
+  /** Sets up the right side buttons for bank changes */
+  private void setupBankButtons()
+  {
+    for (int bank = 0; bank < twister.banks.length; ++bank) {
+      final TwisterButton[] buttons = twister.banks[bank].rightSideButtons;
+
+      buttons[0].addClickedObserver(twister::previousBank);
+      buttons[1].addClickedObserver(twister::nextBank);
+      buttons[2].addClickedObserver(() -> twister.setActiveBank(0));
     }
   }
 

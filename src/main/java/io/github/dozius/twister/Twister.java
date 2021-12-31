@@ -68,6 +68,7 @@ public class Twister
   private final ControllerHost host;
 
   private boolean popupEnabled = false;
+  private int activeBank = -1;
 
   /**
    * Creates a new Twister.
@@ -86,6 +87,38 @@ public class Twister
   }
 
   /**
+   * Sets the active bank to the next available bank.
+   *
+   * If the currently active bank is the last bank then this does nothing.
+   */
+  public void nextBank()
+  {
+    int nextBank = activeBank + 1;
+
+    if (nextBank >= NUM_BANKS) {
+      return;
+    }
+
+    setActiveBank(nextBank);
+  }
+
+  /**
+   * Sets the active bank to the previous available bank.
+   *
+   * If the currently active bank is the first bank then this does nothing.
+   */
+  public void previousBank()
+  {
+    int previousBank = activeBank - 1;
+
+    if (previousBank < 0) {
+      return;
+    }
+
+    setActiveBank(previousBank);
+  }
+
+  /**
    * Sets the active bank to the desired index.
    *
    * @param index Desired bank index.
@@ -93,8 +126,14 @@ public class Twister
   public void setActiveBank(int index)
   {
     assert index > 0 && index < NUM_BANKS : "index is invalid";
-    midiOut.sendMidi(ShortMidiMessage.CONTROL_CHANGE + MidiChannel.SYSTEM, index, 127);
-    showBankChangePopup(index);
+
+    if (activeBank == index) {
+      return; // already active, do nothing
+    }
+
+    activeBank = index;
+    midiOut.sendMidi(ShortMidiMessage.CONTROL_CHANGE + MidiChannel.SYSTEM, activeBank, 127);
+    showBankChangePopup(activeBank);
   }
 
   /**
@@ -166,8 +205,9 @@ public class Twister
   }
 
   /**
-   * Create a listener for bank switch messages. Shows popup notification on bank switch if popups
-   * are enabled.
+   * Create a listener for bank switch messages.
+   *
+   * Updates the internal active bank index and shows a popup notification if popups are enabled.
    */
   private void createBankSwitchListener(MidiIn midiIn)
   {
@@ -177,7 +217,10 @@ public class Twister
         return;
       }
 
-      showBankChangePopup(data1);
+      if (activeBank != data1) {
+        activeBank = data1;
+        showBankChangePopup(data1);
+      }
     });
   }
 
