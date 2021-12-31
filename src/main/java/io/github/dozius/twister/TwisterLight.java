@@ -17,7 +17,10 @@
  */
 package io.github.dozius.twister;
 
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.bitwig.extension.controller.api.MidiOut;
 
@@ -30,24 +33,80 @@ public abstract class TwisterLight
   /** The available animation states of the light. */
   public static enum AnimationState
   {
-   OFF, // animation off
-   STROBE_8_1, // 8/1
-   STROBE_4_1, // 4/1
-   STROBE_2_1, // 2/1
-   STROBE_1_1, // 1/1
-   STROBE_1_2, // 1/2
-   STROBE_1_4, // 1/4
-   STROBE_1_8, // 1/8
-   STROBE_1_16, // 1/16
-   PULSE_8_1, // 8/1
-   PULSE_4_1, // 4/1
-   PULSE_2_1, // 2/1
-   PULSE_1_1, // 1/1
-   PULSE_1_2, // 1/2
-   PULSE_1_4, // 1/4
-   PULSE_1_8, // 1/8
-   PULSE_1_16, // 1/16
-   RAINBOW;
+   OFF("Off"), // animation off
+   STROBE_8_1("Strobe 8/1"), //
+   STROBE_4_1("Strobe 4/1"), //
+   STROBE_2_1("Strobe 2/1"), //
+   STROBE_1_1("Strobe 1/1"), //
+   STROBE_1_2("Strobe 1/2"), //
+   STROBE_1_4("Strobe 1/4"), //
+   STROBE_1_8("Strobe 1/8"), //
+   STROBE_1_16("Strobe 1/16"), //
+   PULSE_8_1("Pulse 8/1"), //
+   PULSE_4_1("Pulse 4/1"), //
+   PULSE_2_1("Pulse 2/1"), //
+   PULSE_1_1("Pulse 1/1"), //
+   PULSE_1_2("Pulse 1/2"), //
+   PULSE_1_4("Pulse 1/4"), //
+   PULSE_1_8("Pulse 1/8"), //
+   PULSE_1_16("Pulse 1/16"), //
+   RAINBOW("Rainbow");
+
+    private static final Map<String, AnimationState> optionMap = new HashMap<String, AnimationState>();
+
+    private String optionString;
+
+    static {
+      for (AnimationState state : values()) {
+        optionMap.put(state.getOptionString(), state);
+      }
+    }
+
+    /**
+     * Constructs an AnimationState
+     *
+     * @param optionString String that will be used in Bitwig option menus.
+     */
+    AnimationState(String optionString)
+    {
+      this.optionString = optionString;
+    }
+
+    /**
+     * @return The animation state's option string.
+     */
+    public String getOptionString()
+    {
+      return optionString;
+    }
+
+    /**
+     * Gets the enum constant with the specific option string.
+     *
+     * @param  optionString             The animation state's option string.
+     *
+     * @return                          The enum constant with the specific option string.
+     *
+     * @throws IllegalArgumentException If the option string is invalid.
+     */
+    public static AnimationState valueOfOptionString(String optionString)
+    {
+      final AnimationState state = optionMap.get(optionString);
+
+      if (state != null) {
+        return state;
+      }
+
+      throw new IllegalArgumentException("Unknown AnimationState option");
+    }
+
+    /**
+     * @return An array of all the option strings for this enum.
+     */
+    public static String[] optionStrings()
+    {
+      return Arrays.stream(values()).map(AnimationState::getOptionString).toArray(String[]::new);
+    }
   }
 
   protected final MidiOut midiOut;

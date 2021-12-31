@@ -10,11 +10,11 @@ A Bitwig Studio controller extension for the
   - [Track & Device Bank (Bank 1)](#track--device-bank-bank-1)
     - [Notes](#notes)
   - [User Mappable Bank (Bank 2-4)](#user-mappable-bank-bank-2-4)
-  - [Side Buttons](#side-buttons)
 - [Options](#options)
   - [Show Bank Popup](#show-bank-popup)
   - [Device Row Color](#device-row-color)
   - [Global Fine Sensitivity](#global-fine-sensitivity)
+  - [Pinned Indication](#pinned-indication)
 - [Project Settings](#project-settings)
   - [User Mappable Knob Colors](#user-mappable-knob-colors)
 - [Specific Device Settings](#specific-device-settings)
@@ -59,17 +59,26 @@ A Bitwig Studio controller extension for the
 
 ### Track & Device Bank (Bank 1)
 
-| Knob | Twist                       | Click                     | Double Click    | Long Press                | RGB Light            |
-| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | -------------------- |
-| 1    | Select track                | Toggle mute               | -               | Toggle arm                | Follow track color   |
-| 2    | Track volume                | Toggle fine sensitivity   | Reset volume    | Toggle Solo               | Follow track color   |
-| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | -                         | Follow track color   |
-| 4    | Current send volume         | Cycle through track sends | -               | -                         | Follow send color    |
-| 5    | Select device               | Toggle enable             | -               | Toggle expand             | Device row color     |
-| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls | Device row color     |
-| 7    | Specific device parameter 1 | Toggle fine sensitivity   | Reset parameter | Insert device before      | Device row color     |
-| 8    | Specific device parameter 2 | Toggle fine sensitivity   | Reset parameter | Insert device after       | Device row color     |
-| 9-16 | Remote control parameter    | Toggle fine sensitivity   | Reset parameter | -                         | Remote control color |
+| Knob | Twist                       | Click                     | Double Click    | Long Press                | Shift Long Press | RGB Light                              |
+| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | ---------------- | -------------------------------------- |
+| 1    | Select track                | Toggle mute               | -               | Toggle arm                | Toggle pinned    | Follow track color & pinned indication |
+| 2    | Track volume                | Toggle fine sensitivity   | Reset volume    | Toggle solo               | -                | Follow track color                     |
+| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | -                         | -                | Follow track color                     |
+| 4    | Current send volume         | Cycle through track sends | -               | -                         | -                | Follow send color                      |
+| 5    | Select device               | Toggle enable             | -               | Toggle expand             | Toggle pinned    | Device row color & pinned indication   |
+| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls | -                | Device row color                       |
+| 7    | Specific device parameter 1 | Toggle fine sensitivity   | Reset parameter | Insert device before      | -                | Device row color                       |
+| 8    | Specific device parameter 2 | Toggle fine sensitivity   | Reset parameter | Insert device after       | -                | Device row color                       |
+| 9-16 | Remote control parameter    | Toggle fine sensitivity   | Reset parameter | -                         | -                | Remote control color                   |
+
+| Side Button  | Action    |
+| ------------ | --------- |
+| Left Side 1  | -         |
+| Left Side 2  | -         |
+| Left Side 3  | -         |
+| Right Side 1 | -         |
+| Right Side 2 | Next bank |
+| Right Side 3 | Shift     |
 
 #### Notes
 
@@ -81,25 +90,25 @@ A Bitwig Studio controller extension for the
 - See the section on [specific device settings](#Specific-Device-Settings) for information on
   configuring knobs 7 and 8.
 
+- To activate the shift actions hold the "shift" side button.
+
+- See the section on [pinned indication](#pinned-indication) for information on how track and device
+  pinned state is indicated by the RGB LEDs.
+
 ### User Mappable Bank (Bank 2-4)
 
 | Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
 | ---- | ------------------- | --------------- | ----------------- | --------------- |
 | 1-16 | Mapped parameter(s) | Set light color | Reset light color | User selectable |
 
-### Side Buttons
-
-These are the settings provided by `TwisterSister.mfs`. The extension does not use the side buttons
-in any way, so these can be changed to whatever you prefer in the MIDI Fighter Utility.
-
-| Button       | Function      |
+| Side Button  | Action        |
 | ------------ | ------------- |
-| Left Side 1  | CC Hold       |
-| Left Side 2  | CC Hold       |
-| Left Side 3  | CC Hold       |
-| Right Side 1 | Previous Bank |
-| Right Side 2 | Next Bank     |
-| Right Side 3 | Bank 1        |
+| Left Side 1  | -             |
+| Left Side 2  | -             |
+| Left Side 3  | -             |
+| Right Side 1 | Previous bank |
+| Right Side 2 | Next bank     |
+| Right Side 3 | Go to bank 1  |
 
 ## Options
 
@@ -121,6 +130,11 @@ uses the same color values as the [user mappable knobs](#User-Mappable-Knob-Colo
 
 Sets the fine sensitivity factor for all encoder controls. The lower the number, the finer the
 movement.
+
+### Pinned Indication
+
+Sets the light animation that will be used to indicate when a track or device is pinned. These
+animations are described in the twister user manual.
 
 ## Project Settings
 

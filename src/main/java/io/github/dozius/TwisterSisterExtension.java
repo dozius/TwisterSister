@@ -33,6 +33,7 @@ import com.bitwig.extension.controller.api.HardwareSurface;
 import com.bitwig.extension.controller.api.MidiIn;
 import com.bitwig.extension.controller.api.MidiOut;
 import com.bitwig.extension.controller.api.Parameter;
+import com.bitwig.extension.controller.api.PinnableCursor;
 import com.bitwig.extension.controller.api.PinnableCursorDevice;
 import com.bitwig.extension.controller.api.Preferences;
 import com.bitwig.extension.controller.api.RemoteControl;
@@ -40,6 +41,7 @@ import com.bitwig.extension.controller.api.Send;
 import com.bitwig.extension.controller.api.SendBank;
 import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.ControllerExtension;
 
@@ -50,6 +52,8 @@ import io.github.dozius.twister.Twister;
 import io.github.dozius.twister.TwisterButton;
 import io.github.dozius.twister.TwisterColors;
 import io.github.dozius.twister.TwisterKnob;
+import io.github.dozius.twister.TwisterLight;
+import io.github.dozius.twister.TwisterLight.AnimationState;
 import io.github.dozius.util.CursorNormalizedValue;
 import io.github.dozius.util.OnOffColorSupplier;
 
@@ -67,6 +71,7 @@ public class TwisterSisterExtension extends ControllerExtension
   private OnOffColorSupplier devicePageColorSupplier;
   private OnOffColorSupplier deviceSpecific1ColorSupplier;
   private OnOffColorSupplier deviceSpecific2ColorSupplier;
+  private SettableEnumValue pinnedAnimationValue;
 
   protected TwisterSisterExtension(final TwisterSisterExtensionDefinition definition,
                                    final ControllerHost host)
@@ -168,6 +173,12 @@ public class TwisterSisterExtension extends ControllerExtension
                                                                                    0.25);
     setGlobalFineSensitivity(globalFineSensitivity.get());
     globalFineSensitivity.addValueObserver(this::setGlobalFineSensitivity);
+
+    // Sets the indicator animation for pinned tracks/devices
+    final String[] pinnedAnimationOptions = AnimationState.optionStrings();
+    pinnedAnimationValue = preferences.getEnumSetting("Pinned Indication", "Options",
+                                                      pinnedAnimationOptions,
+                                                      AnimationState.STROBE_1_1.getOptionString());
   }
 
   /**
@@ -249,9 +260,11 @@ public class TwisterSisterExtension extends ControllerExtension
   {
     final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 0, 0, true, true);
     final TwisterKnob[] knobs = twister.banks[0].knobs;
+    final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
     final SendBank sendBank = cursorTrack.sendBank();
     final Send send = sendBank.getItemAt(0);
 
+    shiftButton.isPressed().markInterested();
     cursorTrack.color().markInterested();
     sendBank.canScrollForwards().markInterested();
     sendBank.itemCount().markInterested();
@@ -261,13 +274,17 @@ public class TwisterSisterExtension extends ControllerExtension
     selectionKnob.setBinding(cursorTrack);
     selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
     selectionKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    selectionKnob.button().setShiftButton(shiftButton);
     selectionKnob.button().addClickedObserver(cursorTrack.mute()::toggle);
     selectionKnob.button().addLongPressedObserver(cursorTrack.arm()::toggle);
+    selectionKnob.button().addShiftLongPressedObserver(cursorTrack.isPinned()::toggle);
+    bindPinnedInidcator(cursorTrack, selectionKnob.rgbLight());
 
     final TwisterKnob volumeKnob = knobs[1];
     volumeKnob.setBinding(cursorTrack.volume());
     volumeKnob.ringLight().observeValue(cursorTrack.volume().value());
     volumeKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    volumeKnob.button().setShiftButton(shiftButton);
     volumeKnob.button().addLongPressedObserver(cursorTrack.solo()::toggle);
     volumeKnob.button().addClickedObserver(volumeKnob::toggleSensitivity);
     volumeKnob.button().addDoubleClickedObserver(cursorTrack.volume()::reset);
@@ -276,6 +293,7 @@ public class TwisterSisterExtension extends ControllerExtension
     panKnob.setBinding(cursorTrack.pan());
     panKnob.ringLight().observeValue(cursorTrack.pan().value());
     panKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    panKnob.button().setShiftButton(shiftButton);
     panKnob.button().addClickedObserver(panKnob::toggleSensitivity);
     panKnob.button().addDoubleClickedObserver(cursorTrack.pan()::reset);
 
@@ -283,6 +301,7 @@ public class TwisterSisterExtension extends ControllerExtension
     sendKnob.setBinding(send);
     sendKnob.ringLight().observeValue(send.value());
     sendKnob.rgbLight().setColorSupplier(send.sendChannelColor());
+    sendKnob.button().setShiftButton(shiftButton);
     sendKnob.button().addClickedObserver(() -> circularScrollForward(sendBank));
   }
 
@@ -293,6 +312,9 @@ public class TwisterSisterExtension extends ControllerExtension
     final CursorRemoteControlsPage remoteControlsPage = cursorDevice.createCursorRemoteControlsPage(8);
     final DeviceBank deviceBank = cursorDevice.createSiblingsDeviceBank(1);
     final TwisterKnob[] knobs = twister.banks[0].knobs;
+    final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
+
+    shiftButton.isPressed().markInterested();
 
     cursorDevice.exists().addValueObserver(deviceColorSupplier::setOn);
     cursorDevice.exists().addValueObserver(devicePageColorSupplier::setOn);
@@ -303,22 +325,28 @@ public class TwisterSisterExtension extends ControllerExtension
     deviceKnob.setBinding(cursorDevice);
     deviceKnob.ringLight().observeValue(new CursorNormalizedValue(cursorDevice, deviceBank));
     deviceKnob.rgbLight().setColorSupplier(deviceColorSupplier);
+    deviceKnob.button().setShiftButton(shiftButton);
     deviceKnob.button().addClickedObserver(cursorDevice.isEnabled()::toggle);
     deviceKnob.button().addLongPressedObserver(cursorDevice.isExpanded()::toggle);
+    deviceKnob.button().addShiftLongPressedObserver(cursorDevice.isPinned()::toggle);
+    bindPinnedInidcator(cursorDevice, deviceKnob.rgbLight());
 
     final TwisterKnob pageKnob = knobs[5];
     pageKnob.setBinding(remoteControlsPage);
     pageKnob.ringLight().observeValue(new CursorNormalizedValue(remoteControlsPage));
     pageKnob.rgbLight().setColorSupplier(devicePageColorSupplier);
+    pageKnob.button().setShiftButton(shiftButton);
     pageKnob.button().addClickedObserver(cursorDevice.isWindowOpen()::toggle);
     pageKnob.button().addLongPressedObserver(cursorDevice.isRemoteControlsSectionVisible()::toggle);
 
     final TwisterKnob specificDeviceKnob1 = knobs[6];
+    specificDeviceKnob1.button().setShiftButton(shiftButton);
     bindLongPressedToBrowseBeforeDevice(specificDeviceKnob1, cursorDevice);
     setupSpecificDeviceKnob("knob1", specificDeviceKnob1, cursorDevice,
                             deviceSpecific1ColorSupplier);
 
     final TwisterKnob specificDeviceKnob2 = knobs[7];
+    specificDeviceKnob2.button().setShiftButton(shiftButton);
     bindLongPressedToBrowseAfterDevice(specificDeviceKnob2, cursorDevice);
     setupSpecificDeviceKnob("knob2", specificDeviceKnob2, cursorDevice,
                             deviceSpecific2ColorSupplier);
@@ -336,9 +364,30 @@ public class TwisterSisterExtension extends ControllerExtension
       knob.setBinding(control);
       knob.ringLight().observeValue(control.value());
       knob.rgbLight().setColorSupplier(colorSupplier);
+      knob.button().setShiftButton(shiftButton);
       knob.button().addClickedObserver(knob::toggleSensitivity);
       knob.button().addDoubleClickedObserver(control::reset);
     }
+  }
+
+  /**
+   * Helper to bind a pinnable cursors pinned state to a light indicator.
+   *
+   * @param cursor The cursor whose pinned state will be observed.
+   * @param light  The light that will blink when the state is pinned.
+   */
+  private void bindPinnedInidcator(PinnableCursor cursor, TwisterLight light)
+  {
+    cursor.isPinned().addValueObserver((isPinned) -> {
+      light.setAnimationState(isPinned ? AnimationState.valueOfOptionString(pinnedAnimationValue.get())
+                                       : TwisterLight.AnimationState.OFF);
+    });
+
+    pinnedAnimationValue.addValueObserver((animation) -> {
+      light.setAnimationState(cursor.isPinned()
+                                    .get() ? AnimationState.valueOfOptionString(animation)
+                                           : TwisterLight.AnimationState.OFF);
+    });
   }
 
   /**
