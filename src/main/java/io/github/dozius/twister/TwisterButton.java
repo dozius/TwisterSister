@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
+import com.bitwig.extension.controller.api.BooleanValue;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.HardwareButton;
 import com.bitwig.extension.controller.api.MidiIn;
@@ -182,6 +183,12 @@ public class TwisterButton
   public void clearLongPressedObserver()
   {
     longPressedObservers.clear();
+  }
+
+  /** Returns the buttons pressed state. */
+  public BooleanValue isPressed()
+  {
+    return button.isPressed();
   }
 
   /** Internal handler of the hardware pressed action. */
