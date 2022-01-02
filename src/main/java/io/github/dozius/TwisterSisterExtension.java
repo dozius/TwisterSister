@@ -56,6 +56,7 @@ import io.github.dozius.twister.TwisterLight;
 import io.github.dozius.twister.TwisterLight.AnimationState;
 import io.github.dozius.util.CursorNormalizedValue;
 import io.github.dozius.util.OnOffColorSupplier;
+import io.github.dozius.util.TrackGroupNavigator;
 
 public class TwisterSisterExtension extends ControllerExtension
 {
@@ -263,6 +264,7 @@ public class TwisterSisterExtension extends ControllerExtension
     final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
     final SendBank sendBank = cursorTrack.sendBank();
     final Send send = sendBank.getItemAt(0);
+    final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
 
     shiftButton.isPressed().markInterested();
     cursorTrack.color().markInterested();
@@ -275,9 +277,10 @@ public class TwisterSisterExtension extends ControllerExtension
     selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
     selectionKnob.rgbLight().setColorSupplier(cursorTrack.color());
     selectionKnob.button().setShiftButton(shiftButton);
-    selectionKnob.button().addClickedObserver(cursorTrack.mute()::toggle);
-    selectionKnob.button().addLongPressedObserver(cursorTrack.arm()::toggle);
-    selectionKnob.button().addShiftLongPressedObserver(cursorTrack.isPinned()::toggle);
+    selectionKnob.button().addClickedObserver(() -> trackGroupNavigator.navigateGroups(true));
+    selectionKnob.button().addShiftClickedObserver(() -> trackGroupNavigator.navigateGroups(false));
+    selectionKnob.button().addLongPressedObserver(cursorTrack.isPinned()::toggle);
+    selectionKnob.button().addShiftLongPressedObserver(cursorTrack.arm()::toggle);
     bindPinnedInidcator(cursorTrack, selectionKnob.rgbLight());
 
     final TwisterKnob volumeKnob = knobs[1];
@@ -285,9 +288,9 @@ public class TwisterSisterExtension extends ControllerExtension
     volumeKnob.ringLight().observeValue(cursorTrack.volume().value());
     volumeKnob.rgbLight().setColorSupplier(cursorTrack.color());
     volumeKnob.button().setShiftButton(shiftButton);
-    volumeKnob.button().addLongPressedObserver(cursorTrack.solo()::toggle);
     volumeKnob.button().addClickedObserver(volumeKnob::toggleSensitivity);
     volumeKnob.button().addDoubleClickedObserver(cursorTrack.volume()::reset);
+    volumeKnob.button().addLongPressedObserver(cursorTrack.mute()::toggle);
 
     final TwisterKnob panKnob = knobs[2];
     panKnob.setBinding(cursorTrack.pan());
@@ -296,6 +299,7 @@ public class TwisterSisterExtension extends ControllerExtension
     panKnob.button().setShiftButton(shiftButton);
     panKnob.button().addClickedObserver(panKnob::toggleSensitivity);
     panKnob.button().addDoubleClickedObserver(cursorTrack.pan()::reset);
+    panKnob.button().addLongPressedObserver(cursorTrack.solo()::toggle);
 
     final TwisterKnob sendKnob = knobs[3];
     sendKnob.setBinding(send);
@@ -327,8 +331,8 @@ public class TwisterSisterExtension extends ControllerExtension
     deviceKnob.rgbLight().setColorSupplier(deviceColorSupplier);
     deviceKnob.button().setShiftButton(shiftButton);
     deviceKnob.button().addClickedObserver(cursorDevice.isEnabled()::toggle);
-    deviceKnob.button().addLongPressedObserver(cursorDevice.isExpanded()::toggle);
-    deviceKnob.button().addShiftLongPressedObserver(cursorDevice.isPinned()::toggle);
+    deviceKnob.button().addShiftClickedObserver(cursorDevice.isExpanded()::toggle);
+    deviceKnob.button().addLongPressedObserver(cursorDevice.isPinned()::toggle);
     bindPinnedInidcator(cursorDevice, deviceKnob.rgbLight());
 
     final TwisterKnob pageKnob = knobs[5];

@@ -71,7 +71,7 @@ public class TwisterSisterExtensionDefinition extends ControllerExtensionDefinit
   @Override
   public int getRequiredAPIVersion()
   {
-    return 12;
+    return 15;
   }
 
   @Override

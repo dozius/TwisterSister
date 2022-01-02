@@ -59,17 +59,17 @@ A Bitwig Studio controller extension for the
 
 ### Track & Device Bank (Bank 1)
 
-| Knob | Twist                       | Click                     | Double Click    | Long Press                | Shift Long Press | RGB Light                              |
-| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | ---------------- | -------------------------------------- |
-| 1    | Select track                | Toggle mute               | -               | Toggle arm                | Toggle pinned    | Follow track color & pinned indication |
-| 2    | Track volume                | Toggle fine sensitivity   | Reset volume    | Toggle solo               | -                | Follow track color                     |
-| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | -                         | -                | Follow track color                     |
-| 4    | Current send volume         | Cycle through track sends | -               | -                         | -                | Follow send color                      |
-| 5    | Select device               | Toggle enable             | -               | Toggle expand             | Toggle pinned    | Device row color & pinned indication   |
-| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls | -                | Device row color                       |
-| 7    | Specific device parameter 1 | Toggle fine sensitivity   | Reset parameter | Insert device before      | -                | Device row color                       |
-| 8    | Specific device parameter 2 | Toggle fine sensitivity   | Reset parameter | Insert device after       | -                | Device row color                       |
-| 9-16 | Remote control parameter    | Toggle fine sensitivity   | Reset parameter | -                         | -                | Remote control color                   |
+| Knob | Twist                       | Click                     | Double Click    | Long Press                | Shift Click               | Shift Long Press | RGB Light                              |
+| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | ------------------------- | ---------------- | -------------------------------------- |
+| 1    | Select track                | Navigate groups (fold)    | -               | Toggle pinned             | Navigate groups (no fold) | Toggle arm       | Follow track color & pinned indication |
+| 2    | Track volume                | Toggle sensitivity        | Reset volume    | Toggle mute               |                           | -                | Follow track color                     |
+| 3    | Track pan                   | Toggle sensitivity        | Reset pan       | Toggle solo               |                           | -                | Follow track color                     |
+| 4    | Current send volume         | Cycle through track sends | -               | -                         |                           | -                | Follow send color                      |
+| 5    | Select device               | Toggle enable             | -               | Toggle pinned             | Toggle expand             | -                | Device row color & pinned indication   |
+| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls |                           | -                | Device row color                       |
+| 7    | Specific device parameter 1 | Toggle sensitivity        | Reset parameter | Insert device before      |                           | -                | Device row color                       |
+| 8    | Specific device parameter 2 | Toggle sensitivity        | Reset parameter | Insert device after       |                           | -                | Device row color                       |
+| 9-16 | Remote control parameter    | Toggle sensitivity        | Reset parameter | -                         |                           | -                | Remote control color                   |
 
 | Side Button  | Action    |
 | ------------ | --------- |
