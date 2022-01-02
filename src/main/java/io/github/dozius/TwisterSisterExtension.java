@@ -272,6 +272,8 @@ public class TwisterSisterExtension extends ControllerExtension
     sendBank.itemCount().markInterested();
     send.sendChannelColor().markInterested();
 
+    setupUIFollowsCursor(cursorTrack);
+
     final TwisterKnob selectionKnob = knobs[0];
     selectionKnob.setBinding(cursorTrack);
     selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
@@ -372,6 +374,25 @@ public class TwisterSisterExtension extends ControllerExtension
       knob.button().addClickedObserver(knob::toggleSensitivity);
       knob.button().addDoubleClickedObserver(control::reset);
     }
+  }
+
+  /**
+   * Makes the UI follow the track cursor selection.
+   *
+   * Only follows when the cursor is not pinned.
+   *
+   * @param cursorTrack The cursor to follow.
+   */
+  private void setupUIFollowsCursor(CursorTrack cursorTrack)
+  {
+    cursorTrack.isPinned().markInterested();
+
+    cursorTrack.position().addValueObserver((position) -> {
+      if (!cursorTrack.isPinned().get()) {
+        cursorTrack.makeVisibleInArranger();
+        cursorTrack.makeVisibleInMixer();
+      }
+    });
   }
 
   /**
