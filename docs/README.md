@@ -136,15 +136,7 @@ movement.
 Sets the light animation that will be used to indicate when a track or device is pinned. These
 animations are described in the twister user manual.
 
-When a track (or device) is pinned, it's focus is no longer tied to the Bitwig UI.  This means that you can select a different track/device with your mouse and the MFT will continue to control the same track/device.  For example:
-
-1.  I select the kick track using the MFT knob 1 (nothing pinned)
-2.  I pin the kick track by long pressing knob 1 (kick is now pinned)
-3.  I select the hihat track using my mouse and I can control it using the mouse
-4.  Moving knob 2 (volume) with the MFT still controls the volume of the kick track
-5.  When I unpin by long pressing knob 1 again, the MFT now controls the hihat track.
-
-The track / device controlled by the MFT are visible in the Studio I/O panel in Bitwig, including the pinned indicator.
+When a track or device is pinned, the MIDI Fighter Twister will not follow the current track or device selected with the mouse or another controller. Info about the state of a pinned track or device is available in the Studio I/O panel in Bitwig Studio.
 
 ## Project Settings
 
