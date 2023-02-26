@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.bitwig.extension.api.Color;
+import com.bitwig.extension.api.Host;
 import com.bitwig.extension.controller.api.Bank;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CursorDevice;
@@ -55,6 +56,7 @@ import io.github.dozius.twister.TwisterKnob;
 import io.github.dozius.twister.TwisterLight;
 import io.github.dozius.twister.TwisterLight.AnimationState;
 import io.github.dozius.util.CursorNormalizedValue;
+import io.github.dozius.util.Logger;
 import io.github.dozius.util.OnOffColorSupplier;
 import io.github.dozius.util.TrackGroupNavigator;
 
@@ -91,7 +93,7 @@ public class TwisterSisterExtension extends ControllerExtension
     twister = new Twister(this);
     documentState = host.getDocumentState();
     specificDeviceSettings = new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
-    cursorTrack = host.createCursorTrack(1, 0);
+    cursorTrack = host.createCursorTrack(4, 1);
     deviceColorSupplier = new OnOffColorSupplier();
     devicePageColorSupplier = new OnOffColorSupplier();
     deviceSpecific1ColorSupplier = new OnOffColorSupplier();
@@ -259,18 +261,27 @@ public class TwisterSisterExtension extends ControllerExtension
   /** Sets up all the track related knobs. Track select, volume, pan, etc. */
   private void addTrackKnobs()
   {
-    final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 0, 0, true, true);
+    final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, true, true);
     final TwisterKnob[] knobs = twister.banks[0].knobs;
     final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
+    
     final SendBank sendBank = cursorTrack.sendBank();
-    final Send send = sendBank.getItemAt(0);
+    Logger.log(String.valueOf(sendBank.getSizeOfBank()));
+    final Send send1 = sendBank.getItemAt(0);
+    final Send send2 = sendBank.getItemAt(1);
+    final Send send3 = sendBank.getItemAt(2);
+    final Send send4 = sendBank.getItemAt(3);
+    
     final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
 
     shiftButton.isPressed().markInterested();
     cursorTrack.color().markInterested();
     sendBank.canScrollForwards().markInterested();
     sendBank.itemCount().markInterested();
-    send.sendChannelColor().markInterested();
+    send1.sendChannelColor().markInterested();
+    send2.sendChannelColor().markInterested();
+    send3.sendChannelColor().markInterested();
+    send4.sendChannelColor().markInterested();
 
     setupUIFollowsCursor(cursorTrack);
 
@@ -294,21 +305,33 @@ public class TwisterSisterExtension extends ControllerExtension
     volumeKnob.button().addDoubleClickedObserver(cursorTrack.volume()::reset);
     volumeKnob.button().addLongPressedObserver(cursorTrack.mute()::toggle);
 
-    final TwisterKnob panKnob = knobs[2];
-    panKnob.setBinding(cursorTrack.pan());
-    panKnob.ringLight().observeValue(cursorTrack.pan().value());
-    panKnob.rgbLight().setColorSupplier(cursorTrack.color());
-    panKnob.button().setShiftButton(shiftButton);
-    panKnob.button().addClickedObserver(panKnob::toggleSensitivity);
-    panKnob.button().addDoubleClickedObserver(cursorTrack.pan()::reset);
-    panKnob.button().addLongPressedObserver(cursorTrack.solo()::toggle);
+    final TwisterKnob send1Knob = knobs[2];
+    send1Knob.setBinding(send1);
+    send1Knob.ringLight().observeValue(send1.value());
+    send1Knob.rgbLight().setColorSupplier(send1.sendChannelColor());
+    send1Knob.button().setShiftButton(shiftButton);
+    send1Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
 
-    final TwisterKnob sendKnob = knobs[3];
-    sendKnob.setBinding(send);
-    sendKnob.ringLight().observeValue(send.value());
-    sendKnob.rgbLight().setColorSupplier(send.sendChannelColor());
-    sendKnob.button().setShiftButton(shiftButton);
-    sendKnob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    final TwisterKnob send2Knob = knobs[3];
+    send2Knob.setBinding(send2);
+    send2Knob.ringLight().observeValue(send2.value());
+    send2Knob.rgbLight().setColorSupplier(send2.sendChannelColor());
+    send2Knob.button().setShiftButton(shiftButton);
+    send2Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+
+    final TwisterKnob send3Knob = knobs[6];
+    send3Knob.setBinding(send3);
+    send3Knob.ringLight().observeValue(send3.value());
+    send3Knob.rgbLight().setColorSupplier(send3.sendChannelColor());
+    send3Knob.button().setShiftButton(shiftButton);
+    send3Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+
+    final TwisterKnob send4Knob = knobs[7];
+    send4Knob.setBinding(send4);
+    send4Knob.ringLight().observeValue(send4.value());
+    send4Knob.rgbLight().setColorSupplier(send4.sendChannelColor());
+    send4Knob.button().setShiftButton(shiftButton);
+    send4Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
   }
 
   /** Sets up all the device related knobs. Selection, remote control page, etc. */
@@ -344,18 +367,6 @@ public class TwisterSisterExtension extends ControllerExtension
     pageKnob.button().setShiftButton(shiftButton);
     pageKnob.button().addClickedObserver(cursorDevice.isWindowOpen()::toggle);
     pageKnob.button().addLongPressedObserver(cursorDevice.isRemoteControlsSectionVisible()::toggle);
-
-    final TwisterKnob specificDeviceKnob1 = knobs[6];
-    specificDeviceKnob1.button().setShiftButton(shiftButton);
-    bindLongPressedToBrowseBeforeDevice(specificDeviceKnob1, cursorDevice);
-    setupSpecificDeviceKnob("knob1", specificDeviceKnob1, cursorDevice,
-                            deviceSpecific1ColorSupplier);
-
-    final TwisterKnob specificDeviceKnob2 = knobs[7];
-    specificDeviceKnob2.button().setShiftButton(shiftButton);
-    bindLongPressedToBrowseAfterDevice(specificDeviceKnob2, cursorDevice);
-    setupSpecificDeviceKnob("knob2", specificDeviceKnob2, cursorDevice,
-                            deviceSpecific2ColorSupplier);
 
     final int firstKnobIndex = 8;
 
@@ -428,107 +439,6 @@ public class TwisterSisterExtension extends ControllerExtension
     }
     else {
       bank.scrollBy(-(bank.itemCount().get() - 1));
-    }
-  }
-
-  /**
-   * Binds a knob buttons long pressed action to insert a device after the selected device or at the
-   * start of the chain if no devices exist yet.
-   *
-   * @param knob         Knob to bind.
-   * @param cursorDevice Device cursor to follow.
-   */
-  private void bindLongPressedToBrowseAfterDevice(TwisterKnob knob, CursorDevice cursorDevice)
-  {
-    cursorDevice.exists().addValueObserver((exists) -> {
-      final Runnable browseAfter = cursorDevice.afterDeviceInsertionPoint()::browse;
-      final Runnable browseStart = cursorDevice.deviceChain()
-                                               .startOfDeviceChainInsertionPoint()::browse;
-
-      knob.button().setLongPressedObserver(exists ? browseAfter : browseStart);
-    });
-  }
-
-  /**
-   * Binds a knob buttons long pressed action to insert a device before the selected device or at
-   * the start of the chain if no devices exist yet.
-   *
-   * @param knob         Knob to bind.
-   * @param cursorDevice Device cursor to follow.
-   */
-  private void bindLongPressedToBrowseBeforeDevice(TwisterKnob knob, CursorDevice cursorDevice)
-  {
-    cursorDevice.exists().addValueObserver((exists) -> {
-      final Runnable browseBefore = cursorDevice.beforeDeviceInsertionPoint()::browse;
-      final Runnable browseStart = cursorDevice.deviceChain()
-                                               .startOfDeviceChainInsertionPoint()::browse;
-
-      knob.button().setLongPressedObserver(exists ? browseBefore : browseStart);
-    });
-  }
-
-  /**
-   * Sets up a knob to control a specific device control parameter based on key name.
-   *
-   * @param controlKey    The controls key to apply to the knob.
-   * @param knob          The knob to setup.
-   * @param device        The device used to create the parameters.
-   * @param colorSupplier The color supplier for the knob.
-   */
-  private void setupSpecificDeviceKnob(String controlKey, TwisterKnob knob, Device device,
-                                       OnOffColorSupplier colorSupplier)
-  {
-    knob.rgbLight().setColorSupplier(colorSupplier);
-    knob.button().addClickedObserver(knob::toggleSensitivity);
-
-    final Set<String> keys = specificDeviceSettings.controlMap().get(controlKey);
-
-    if (keys == null) {
-      return;
-    }
-
-    for (String key : keys) {
-      bindSpecificDevices(specificDeviceSettings.bitwigDevices(), key, device, knob, colorSupplier);
-      bindSpecificDevices(specificDeviceSettings.vst3Devices(), key, device, knob, colorSupplier);
-      bindSpecificDevices(specificDeviceSettings.vst2Devices(), key, device, knob, colorSupplier);
-    }
-  }
-
-  /**
-   * Binds all available parameters from all devices that match the key.
-   *
-   * @param <IdType>      The type of the device ID. This will be deduced from settings.
-   * @param <SettingType> The type of device settings object. This will be deduced from settings.
-   * @param settings      The list of device settings to search.
-   * @param key           The parameter key to match against.
-   * @param device        The device used to create parameters.
-   * @param knob          The knob to bind parameters to.
-   * @param colorSupplier The knobs color supplier.
-   */
-  private <IdType, SettingType extends AbstractDeviceSetting<IdType, ?>> void bindSpecificDevices(List<SettingType> settings,
-                                                                                                  String key,
-                                                                                                  Device device,
-                                                                                                  TwisterKnob knob,
-                                                                                                  OnOffColorSupplier colorSupplier)
-  {
-    for (final SettingType setting : settings) {
-      if (setting.parameters().get(key) == null) {
-        continue;
-      }
-
-      final Parameter param = setting.createParameter(device, key);
-
-      knob.ringLight().observeValue(param.value());
-
-      param.exists().markInterested();
-      param.exists().addValueObserver((exists) -> {
-        if (exists) {
-          knob.setBinding(param);
-          knob.button().setDoubleClickedObserver(param::reset);
-        }
-
-        colorSupplier.setOn(exists);
-      });
     }
   }
 }

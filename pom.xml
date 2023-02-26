@@ -23,7 +23,7 @@
         </os>
       </activation>
       <properties>
-        <bitwig.extension.directory>${env.USERPROFILE}/Documents/Bitwig Studio/Extensions</bitwig.extension.directory>
+        <bitwig.extension.directory>D:\Users_Directory\yoann\Documents\Bitwig Studio\Extensions</bitwig.extension.directory>
       </properties>
     </profile>
     <profile>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>com.bitwig</groupId>
       <artifactId>extension-api</artifactId>
-      <version>15</version>
+      <version>17</version>
     </dependency>
 
     <dependency>
@@ -195,4 +195,3 @@
     </plugins>
   </build>
 </project>
-

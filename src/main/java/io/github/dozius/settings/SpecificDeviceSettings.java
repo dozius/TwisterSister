@@ -82,7 +82,6 @@ import org.tomlj.TomlTable;
  */
 public class SpecificDeviceSettings
 {
-  private final Map<String, Set<String>> controlMap;
   private final List<BitwigDeviceSetting> bitwigDevices;
   private final List<Vst3DeviceSetting> vst3Devices;
   private final List<Vst2DeviceSetting> vst2Devices;
@@ -106,8 +105,6 @@ public class SpecificDeviceSettings
 
         throw new ParseException(String.join("\n", errorMessages), 0);
       }
-
-      controlMap = loadControls(toml);
       bitwigDevices = loadDevices(toml, "bitwig", BitwigDeviceSetting::fromToml);
       vst3Devices = loadDevices(toml, "vst3", Vst3DeviceSetting::fromToml);
       vst2Devices = loadDevices(toml, "vst2", Vst2DeviceSetting::fromToml);
@@ -127,13 +124,13 @@ public class SpecificDeviceSettings
     this(Paths.get(settingsPath));
   }
 
-  /**
-   * @return Map of controls with parameter keys.
-   */
-  public Map<String, Set<String>> controlMap()
-  {
-    return controlMap;
-  }
+  // /**
+  //  * @return Map of controls with parameter keys.
+  //  */
+  // public Map<String, Set<String>> controlMap()
+  // {
+  //   return controlMap;
+  // }
 
   /**
    * @return List of Bitwig devices.
@@ -157,48 +154,6 @@ public class SpecificDeviceSettings
   public List<Vst2DeviceSetting> vst2Devices()
   {
     return vst2Devices;
-  }
-
-  /**
-   * Loads all the controls and their device parameter key arrays from the controls table.
-   *
-   * @param  result The parse result of the the TOML config file.
-   *
-   * @return        A set of control keys mapped to lists of device parameter keys.
-   */
-  private Map<String, Set<String>> loadControls(TomlParseResult result)
-  {
-    final TomlTable controlsTable = result.getTable("controls");
-
-    if (controlsTable == null) {
-      return null;
-    }
-
-    final Map<String, Set<String>> output = new HashMap<>();
-
-    for (String key : controlsTable.keySet()) {
-      final TomlArray controlParams = controlsTable.getArray(key);
-
-      if (controlParams == null) {
-        continue;
-      }
-
-      Set<String> params = new HashSet<>();
-
-      for (int i = 0; i < controlParams.size(); ++i) {
-        final String param = controlParams.getString(i);
-
-        if (param == null) {
-          continue;
-        }
-
-        params.add(param);
-      }
-
-      output.put(key, params);
-    }
-
-    return output;
   }
 
   /**
