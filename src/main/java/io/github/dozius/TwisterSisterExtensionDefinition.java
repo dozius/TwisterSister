@@ -35,19 +35,19 @@ public class TwisterSisterExtensionDefinition extends ControllerExtensionDefinit
   @Override
   public String getName()
   {
-    return "Twister Sister";
+    return "Twister Sister Tracteur";
   }
 
   @Override
   public String getAuthor()
   {
-    return "Dan Smith";
+    return "Dan Smith (mods by ylmrx)";
   }
 
   @Override
   public String getVersion()
   {
-    return "2.0.0";
+    return "2.0.0~0.1";
   }
 
   @Override

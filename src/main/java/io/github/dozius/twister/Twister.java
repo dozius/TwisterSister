@@ -68,6 +68,7 @@ public class Twister
   private final ControllerHost host;
 
   private boolean popupEnabled = false;
+  public boolean ext1 = false;
   private int activeBank = -1;
 
   /**
@@ -146,6 +147,10 @@ public class Twister
     popupEnabled = enabled;
   }
 
+  public void setExtender1(boolean extender)
+  {
+    ext1 = extender;
+  }
   /** Turns off all lights on the Twister. */
   public void lightsOff()
   {

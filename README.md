@@ -9,6 +9,30 @@ Precompiled releases can be found [here](https://github.com/dozius/TwisterSister
 
 User documentation, including installation instructions, can be found [here](docs/README.md).
 
+# Fork considerations
+
+This is twister sister, with those mods: 
+
+- replace user controls and pan knob with more sends
+- add bank2 , controlling 4 consecutive tracks (faders on 4th row), and 3 sends (3 first rows)
+    - move banks button to the left side by default
+    - toggle arm - click send2 knob
+    - toggle solo - click send3 knob
+    - toggle mute - click volume knob
+    - pan - click + volume
+- add a toggle to set a MFT as an "extender", when a track has this option enabled:
+    - banks button are on the right side
+    - track controls (banks) are offset by 4 tracks (you get an 8 fader page)
+- Bank2/knob4 (top-right):
+    - click+twist = select channel
+    - double click = enter/exit a group
+
+## issues
+
+behaves poorly when tracks are pinned
+
+# build
+
 ## Compiling
 
 ### Requirements
