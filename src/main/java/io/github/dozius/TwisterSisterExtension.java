@@ -100,10 +100,7 @@ public class TwisterSisterExtension extends ControllerExtension
     documentState = host.getDocumentState();
     specificDeviceSettings = new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
     cursorTrack = host.createCursorTrack("0", "one", 4, 1, true);
-    // cursorFourTrack = host.createCursorTrack("1", "multi", 3, 1, true);
-
-    trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, false, false);
-    trackBankFour = cursorTrack.createSiblingsTrackBank(8, 3, 1, false, false);
+    cursorFourTrack = host.createCursorTrack("1", "multi", 3, 1, true);
 
     deviceColorSupplier = new OnOffColorSupplier();
     devicePageColorSupplier = new OnOffColorSupplier();
@@ -252,12 +249,14 @@ public class TwisterSisterExtension extends ControllerExtension
   /** Sets up all the hardware for the track bank. */
   private void setupTrackBank()
   {
+    trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, false, false); 
     addTrackKnobs();
     addDeviceKnobs();
   }
 
   private void setupFourTrackBank()
   {
+    trackBankFour = cursorFourTrack.createSiblingsTrackBank(twister.dual ? 8 : 4, 3, 1, false, false);
     addFourTrackKnobs();
   }
 
@@ -373,24 +372,23 @@ public class TwisterSisterExtension extends ControllerExtension
   {
     final TwisterKnob[] knobs = twister.banks[1].knobs;
     
-    trackBankFour.setSizeOfBank(twister.dual ? 8 : 4);
     setupUIFollowsCursor(cursorTrack);
 
-    final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
+    final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorFourTrack);
     TwisterKnob nBank = knobs[3];
       nBank.button().addClickedObserver(() -> { 
-        for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorTrack.selectNext();
+        for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorFourTrack.selectNext();
       });
       nBank.button().addLongPressedObserver(() -> trackGroupNavigator.navigateGroups(false));
 
     TwisterKnob pBank = knobs[2];
       pBank.button().addClickedObserver(() -> {
-        for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorTrack.selectPrevious();
+        for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorFourTrack.selectPrevious();
       });
       pBank.button().addLongPressedObserver(() -> trackGroupNavigator.navigateGroups(false));
   
     int offset = 0;
-    if (twister.ext1 && twister.dual) {
+    if (twister.ext1) {
       offset = 4;
     }
     for (int i = offset; i < offset + 4; i++) {
