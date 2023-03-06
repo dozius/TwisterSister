@@ -23,9 +23,25 @@ This is twister sister, with those mods:
 - add a toggle to set a MFT as an "extender", when a track has this option enabled:
     - banks button are on the right side
     - track controls (banks) are offset by 4 tracks (you get an 8 fader page)
-- Bank2/knob4 (top-right):
-    - click+twist = select channel
-    - double click = enter/exit a group
+- Bank2/knob4 (top-right): click = next fader page
+- Bank2/knob3 (top-right): click = previous fader page
+- Bank2/knob3-4 (top-right): long-click = get in/out group
+
+## dual twister mode
+
+- enable dual mode for 8-track pages
+- set a second twister in dual mode + extender to get 4-8 tracks' control
+- in extender mode, bank buttons are on the right
+
+When switching mode, you need to restart the extensions in order to process the config change
+
+## two single mode twister
+
+This will behave poorly as both twisters will bind to the first 4-tracks
+
+## more twisters
+
+hack it yourself.
 
 ## issues
 

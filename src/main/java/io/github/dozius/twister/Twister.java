@@ -69,6 +69,7 @@ public class Twister
 
   private boolean popupEnabled = false;
   public boolean ext1 = false;
+  public boolean dual = false;
   private int activeBank = -1;
 
   /**
@@ -147,8 +148,10 @@ public class Twister
     popupEnabled = enabled;
   }
 
-  public void setExtender1(boolean extender)
-  {
+  public void setDual(boolean dual_status) {
+    dual = dual_status;
+  }
+  public void setExtender1(boolean extender) {
     ext1 = extender;
   }
   /** Turns off all lights on the Twister. */
