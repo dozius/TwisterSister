@@ -25,6 +25,7 @@ import com.bitwig.extension.api.Host;
 import com.bitwig.extension.controller.api.Bank;
 import com.bitwig.extension.controller.api.ControllerHost;
 import com.bitwig.extension.controller.api.CursorDevice;
+import com.bitwig.extension.controller.api.CursorNavigationMode;
 import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.Device;
@@ -70,6 +71,9 @@ public class TwisterSisterExtension extends ControllerExtension
   public CursorTrack cursorTrack;
   public CursorTrack cursorFourTrack;
 
+  public TrackBank trackBank;
+  public TrackBank trackBankFour;
+
   private DocumentState documentState;
   private SpecificDeviceSettings specificDeviceSettings;
   private OnOffColorSupplier deviceColorSupplier;
@@ -95,8 +99,12 @@ public class TwisterSisterExtension extends ControllerExtension
     twister = new Twister(this);
     documentState = host.getDocumentState();
     specificDeviceSettings = new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
-    cursorTrack = host.createCursorTrack(4, 1);
-    cursorFourTrack = host.createCursorTrack(4, 1);
+    cursorTrack = host.createCursorTrack("0", "one", 4, 1, true);
+    // cursorFourTrack = host.createCursorTrack("1", "multi", 3, 1, true);
+
+    trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, true, false);
+    trackBankFour = cursorTrack.createSiblingsTrackBank(8, 3, 1, true, false);
+
     deviceColorSupplier = new OnOffColorSupplier();
     devicePageColorSupplier = new OnOffColorSupplier();
     deviceSpecific1ColorSupplier = new OnOffColorSupplier();
@@ -280,11 +288,13 @@ public class TwisterSisterExtension extends ControllerExtension
   /** Sets up all the track related knobs. Track select, volume, pan, etc. */
   private void addTrackKnobs()
   {
-    final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, true, false);
+    // final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, true, false);
+    Track tb = trackBank.getItemAt(0);
+
     final TwisterKnob[] knobs = twister.banks[0].knobs;
     final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
     
-    final SendBank sendBank = cursorTrack.sendBank();
+    final SendBank sendBank = tb.sendBank();
     final Send send1 = sendBank.getItemAt(0);
     final Send send2 = sendBank.getItemAt(1);
     final Send send3 = sendBank.getItemAt(2);
@@ -293,7 +303,8 @@ public class TwisterSisterExtension extends ControllerExtension
     final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
 
     shiftButton.isPressed().markInterested();
-    cursorTrack.color().markInterested();
+    tb.color().markInterested();
+    
     sendBank.canScrollForwards().markInterested();
     sendBank.itemCount().markInterested();
     send1.sendChannelColor().markInterested();
@@ -306,7 +317,8 @@ public class TwisterSisterExtension extends ControllerExtension
     final TwisterKnob selectionKnob = knobs[0];
     selectionKnob.setBinding(cursorTrack);
     selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
-    selectionKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    // selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
+    selectionKnob.rgbLight().setColorSupplier(tb.color());
     selectionKnob.button().setShiftButton(shiftButton);
     selectionKnob.button().addClickedObserver(() -> trackGroupNavigator.navigateGroups(true));
     selectionKnob.button().addShiftClickedObserver(() -> trackGroupNavigator.navigateGroups(false));
@@ -315,13 +327,13 @@ public class TwisterSisterExtension extends ControllerExtension
     bindPinnedInidcator(cursorTrack, selectionKnob.rgbLight());
 
     final TwisterKnob volumeKnob = knobs[1];
-    volumeKnob.setBinding(cursorTrack.volume());
-    volumeKnob.ringLight().observeValue(cursorTrack.volume().value());
-    volumeKnob.rgbLight().setColorSupplier(cursorTrack.color());
+    volumeKnob.setBinding(tb.volume());
+    volumeKnob.ringLight().observeValue(tb.volume().value());
+    volumeKnob.rgbLight().setColorSupplier(tb.color());
     volumeKnob.button().setShiftButton(shiftButton);
     volumeKnob.button().addClickedObserver(volumeKnob::toggleSensitivity);
-    volumeKnob.button().addDoubleClickedObserver(cursorTrack.volume()::reset);
-    volumeKnob.button().addLongPressedObserver(cursorTrack.mute()::toggle);
+    volumeKnob.button().addDoubleClickedObserver(tb.volume()::reset);
+    volumeKnob.button().addLongPressedObserver(tb.mute()::toggle);
 
     final TwisterKnob send1Knob = knobs[2];
     send1Knob.setBinding(send1);
@@ -355,21 +367,34 @@ public class TwisterSisterExtension extends ControllerExtension
   /** Sets up all the track related knobs. Track select, volume, pan, etc. */
   private void addFourTrackKnobs()
   {
-    final TrackBank trackBank = cursorFourTrack.createSiblingsTrackBank(8, 3, 1, true, false);
+    // final TrackBank trackBank = cursorFourTrack.createSiblingsTrackBank(8, 4, 1, true, false);
     final TwisterKnob[] knobs = twister.banks[1].knobs;
+    // cursorFourTrack.sel(8);;
+    // trackBankFour.getCapacityOfBank();
+    // cursorFourTrack.color().markInterested();
+    // cursorFourTrack.color;
     
-    final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorFourTrack);
-    setupUIFollowsCursor(cursorFourTrack);
+    setupUIFollowsCursor(cursorTrack);
+    trackBankFour.setSizeOfBank(8);
+    final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
+    TwisterKnob nBank = knobs[15];
+      nBank.button().addLongPressedObserver(() -> { 
+        for (int i = 0; i < 8; i++) cursorTrack.selectNext();
+      });
+    TwisterKnob pBank = knobs[14];
+      pBank.button().addLongPressedObserver(() -> {
+        for (int i = 0; i < 8; i++) cursorTrack.selectPrevious();
+      });
     TwisterKnob fwKnob = knobs[3];
-      fwKnob.setShiftBinding(cursorFourTrack);
-      fwKnob.shiftRingLight().observeValue(new CursorNormalizedValue(cursorFourTrack, trackBank));
+      fwKnob.setShiftBinding(cursorTrack);
+      fwKnob.shiftRingLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBankFour));
       fwKnob.button().addDoubleClickedObserver(() -> trackGroupNavigator.navigateGroups(false));
     int offset = 0;
     if (twister.ext1) {
       offset = 4;
     }
     for (int i = offset; i < offset + 4; i++) {
-      Track tb = trackBank.getItemAt(i);
+      Track tb = trackBankFour.getItemAt(i);
 
       tb.color().markInterested();
       final SendBank sb = tb.sendBank();
@@ -380,7 +405,7 @@ public class TwisterSisterExtension extends ControllerExtension
         TwisterKnob sendKnob = knobs[j * 4 + i - offset];
           sendKnob.setBinding(send);
           sendKnob.ringLight().observeValue(send.value());
-          sendKnob.rgbLight().setColorSupplier(send.sendChannelColor());
+          sendKnob.rgbLight().setColorSupplier(tb.color());
         if(j == 1) sendKnob.button().addClickedObserver(() -> tb.arm().toggle());
         if(j == 2) sendKnob.button().addClickedObserver(() -> tb.solo().toggle());
       }
