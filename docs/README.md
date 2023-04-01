@@ -65,12 +65,12 @@ A Bitwig Studio controller extension for the
 | ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | ------------------------- | ---------------- | -------------------------------------- |
 | 1    | Select track                | Navigate groups (fold)    | -               | Toggle pinned             | Navigate groups (no fold) | Toggle arm       | Follow track color & pinned indication |
 | 2    | Track volume                | Toggle sensitivity        | Reset volume    | Toggle mute               |                           | -                | Follow track color                     |
-| 3    | Send 1                      | Scroll sends page fwd     | Reset pan       | Toggle solo               |                           | -                | Follow track color                     |
-| 4    | Send 2                      | Scroll sends page back    | -               | -                         |                           | -                | Follow send color                      |
+| 3    | Send 1                      | Scroll sends page fwd     | Reset pan       | Toggle solo               |                           | -                | Follow send1 color                      |
+| 4    | Send 2                      | Scroll sends page back    | -               | -                         |                           | -                | Follow send2 color                      |
+| 7    | Send 3                      | -                         | Reset parameter | Insert device before      |                           | -                | Follow send3 color                      |
+| 8    | Send 4                      | -                         | Reset parameter | Insert device after       |                           | -                | Follow send4 color                      |
 | 5    | Select device               | Toggle enable             | -               | Toggle pinned             | Toggle expand             | -                | Device row color & pinned indication   |
 | 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls |                           | -                | Device row color                       |
-| 7    | Send 3                      | -                         | Reset parameter | Insert device before      |                           | -                | Device row color                       |
-| 8    | Send 4                      | -                         | Reset parameter | Insert device after       |                           | -                | Device row color                       |
 | 9-16 | Remote control parameter    | Toggle sensitivity        | Reset parameter | -                         |                           | -                | Remote control color                   |
 
 | Side Button  | Action    |
@@ -114,7 +114,7 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
 | 1-4  | Band 1-4 frequency    |  Band 1-4 Q      | Mute band        | Freq color & mute:off   |
 | 5-8  | Band 1-4 gain         |  Band 1-4 Type   | Turn band off    | Freq color & OFF:Off    |
 | 9-12 | Band 5-8 frequency    |  Band 5-8 Q      | Mute band        | Freq color & mute:off   |
-| 13-16| Band 1-4 gain         |  Band 5-8 Type   | Turn band off    | Freq color & OFF:Off    |
+| 13-16| Band 5-8 gain         |  Band 5-8 Type   | Turn band off    | Freq color & OFF:Off    |
 
 ## dual twister mode
 
@@ -186,6 +186,23 @@ Sets the light animation that will be used to indicate when a track or device is
 animations are described in the twister user manual.
 
 When a track or device is pinned, the MIDI Fighter Twister will not follow the current track or device selected with the mouse or another controller. Info about the state of a pinned track or device is available in the Studio I/O panel in Bitwig Studio.
+
+### Enable EQ 3rd Bank
+
+Enable EQ control for 3rd bank instead of user mappings.
+
+EQ controls are described above, it will attach to the last EQ+ on currently selected track.
+
+### Dual twister mode
+
+Control pages of 8 track in the mixer instead of 4.
+
+### Extender
+
+Swap bank button. Offset 4 track faders control by 4. In dual twister mode, this is how you specify
+Which is on the left and which is on the right.
+
+tl;dr - Right-hand MFT when using 2.
 
 ## Project Settings
 
