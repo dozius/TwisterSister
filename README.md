@@ -41,8 +41,8 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
 - bank3/knob on 2nd and 4th row:
     - twist = set gain
     - click + twist = set filter type
-    - click + twist full-left = turn band off (gain led turns off)
-- RGB roughly matches Bitwig' frequency display
+    - double-click = turn band off (re-enable by setting a filter type)
+- RGB under knob matches Bitwig' :rainbow: frequency display
 
 ## dual twister mode
 

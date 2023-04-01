@@ -37,10 +37,10 @@ import io.github.dozius.util.MathUtil;
  */
 public class UserColorSettings
 {
-  private static final int NUM_USER_BANKS = 4;
+  private static final int NUM_USER_BANKS = 5;
   private static final int NUM_KNOBS_PER_BANK = Twister.Bank.NUM_KNOBS;
 
-  private final List<String> options = List.of("Hide", "2", "3", "4");
+  private final List<String> options = List.of("Hide", "3", "4", "5");
   private final SettableRangedValue[][] settings = new SettableRangedValue[NUM_USER_BANKS][NUM_KNOBS_PER_BANK];
   private final SettableEnumValue selector;
 

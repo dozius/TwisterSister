@@ -80,6 +80,53 @@ A Bitwig Studio controller extension for the
 | Right Side 2 | Next bank |
 | Right Side 3 | Shift     |
 
+### 4 (or 8) tracks Mixer (Bank 2)
+
+**NOTE**: the 8-track mode will require _2 MF-Twister modules_
+
+Use `dual twister mode` to have 8 track pages, if you have 2 MFTs. 
+(in this mode, bank buttons are moved to the left, for your convenience so you can have your
+MFTs side-to-side :smile:)
+
+Use `Extender` in settings to set specific MFT as a '2nd page'. When set in this mode, MFT will
+control tracks which numbers are in parens.
+(When in extender mode, bank buttons stays to the right, so you can have them side-by-side)
+
+| Knob | Twist                    | Click                     | Hold & Twist     | Long Press       | RGB Light                         |
+| ---- | ------------------------ | ------------------------- | ---------------- | ---------------- | --------------------------------- |
+| 1-4  | Send 1 track 1-4 (5-8)   | -                         |  -               | -                | Follow track color                |
+| 5-8  | Send 2 track 1-4 (5-8)   | Arm                       |  -               | -                | Follow track color & arm status   |
+| 9-12 | Send 3 track 1-4 (5-8)   | Solo                      |  -               | -                | Follow track color & solo status  |
+| 13-16| Track volume 1-4 (5-8)   | Mute                      |  Pan             | -                | Follow track color & mute status  |
+| 3    | ...                      | Previous 8-track page     |  -               | Navigate group   | -                                 |
+| 4    | ...                      | Next 8-track page         |  -               | Navigate group   | -                                 |
+
+No further pages are planned here, if you get n-pages to work, please open an issue. :smile:
+
+## Eq Mode
+
+If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controller.
+
+| Knob | Twist                 | Hold & Twist     | Double-click     | RGB Light               |
+| ---- | --------------------- | ---------------- | ---------------- | ----------------------- |
+| 1-4  | Band 1-4 frequency    |  Band 1-4 Q      | Mute band        | Freq color & mute:off   |
+| 5-8  | Band 1-4 gain         |  Band 1-4 Type   | Turn band off    | Freq color & OFF:Off    |
+| 9-12 | Band 5-8 frequency    |  Band 5-8 Q      | Mute band        | Freq color & mute:off   |
+| 13-16| Band 1-4 gain         |  Band 5-8 Type   | Turn band off    | Freq color & OFF:Off    |
+
+## dual twister mode
+
+- enable dual mode for 8-track pages
+- set a second twister in dual mode + extender to get 4-8 tracks' control
+- in extender mode, bank buttons are on the right
+
+When switching mode, you need to restart the extensions in order to process the config change
+
+## two single mode twister
+
+This will behave poorly as both twisters will bind to the first 4-tracks
+
+
 #### Notes
 
 - The color palette on the Twister is very limited. Colors are matched as closely as possible.
@@ -95,7 +142,7 @@ A Bitwig Studio controller extension for the
 - See the section on [pinned indication](#pinned-indication) for information on how track and device
   pinned state is indicated by the RGB LEDs.
 
-### User Mappable Bank (Bank 2-4)
+### User Mappable Bank (Bank (3)-4-5)
 
 | Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
 | ---- | ------------------- | --------------- | ----------------- | --------------- |

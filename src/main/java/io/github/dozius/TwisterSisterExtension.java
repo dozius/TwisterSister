@@ -17,16 +17,11 @@
  */
 package io.github.dozius;
 
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.bitwig.extension.api.Color;
-import com.bitwig.extension.api.Host;
 import com.bitwig.extension.controller.api.Bank;
 import com.bitwig.extension.controller.api.ControllerHost;
-import com.bitwig.extension.controller.api.CursorDevice;
-import com.bitwig.extension.controller.api.CursorNavigationMode;
 import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.Device;
@@ -46,13 +41,11 @@ import com.bitwig.extension.controller.api.SendBank;
 import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
 import com.bitwig.extension.controller.api.SpecificBitwigDevice;
-import com.bitwig.extension.controller.api.SpecificPluginDevice;
 import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.ControllerExtension;
 
-import io.github.dozius.settings.AbstractDeviceSetting;
 import io.github.dozius.settings.UserColorSettings;
 import io.github.dozius.settings.SpecificDeviceSettings;
 import io.github.dozius.twister.Twister;
@@ -62,7 +55,6 @@ import io.github.dozius.twister.TwisterKnob;
 import io.github.dozius.twister.TwisterLight;
 import io.github.dozius.twister.TwisterLight.AnimationState;
 import io.github.dozius.util.CursorNormalizedValue;
-import io.github.dozius.util.Logger;
 import io.github.dozius.util.OnOffColorSupplier;
 import io.github.dozius.util.TrackGroupNavigator;
 
@@ -79,7 +71,6 @@ public class TwisterSisterExtension extends ControllerExtension
   public TrackBank trackBankFour;
 
   private DocumentState documentState;
-  private SpecificDeviceSettings specificDeviceSettings;
   private OnOffColorSupplier deviceColorSupplier;
   private OnOffColorSupplier devicePageColorSupplier;
   private OnOffColorSupplier deviceSpecific1ColorSupplier;
@@ -107,7 +98,7 @@ public class TwisterSisterExtension extends ControllerExtension
     hardwareSurface = host.createHardwareSurface();
     twister = new Twister(this);
     documentState = host.getDocumentState();
-    specificDeviceSettings = new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
+    new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
     cursorTrack = host.createCursorTrack("0", "one", 4, 1, true);
     cursorFourTrack = host.createCursorTrack("1", "multi", 3, 1, true);
 
@@ -335,7 +326,6 @@ public class TwisterSisterExtension extends ControllerExtension
         final Parameter resParam = specificEQDevice.createParameter(String.format("Q%d", j + 1 + 4 * i));
         final Parameter typeParam = specificEQDevice.createParameter(String.format("TYPE%d", j + 1 + 4 * i));
 
-
         final TwisterKnob freqKnob = knobs[j + (i * 8)];
         freqKnob.rgbLight().overrideBrightness(0);;
         // freqKnob.ringLight().overrideBrightness(0);;
@@ -360,7 +350,7 @@ public class TwisterSisterExtension extends ControllerExtension
         typeParam.value().addValueObserver((value) -> {
           if (value > 0.0) {
             gainKnob.rgbLight().overrideBrightness(255);
-            // gainKnob.ringLight().overrideBrightness(255);
+            gainKnob.ringLight().overrideBrightness(255);
             if (enabledParam.getAsDouble() > 0.0) {
               freqKnob.rgbLight().overrideBrightness(255);
             } else {
@@ -368,7 +358,7 @@ public class TwisterSisterExtension extends ControllerExtension
             }
           } else {
             gainKnob.rgbLight().overrideBrightness(0);
-            // gainKnob.ringLight().overrideBrightness(0);
+            gainKnob.ringLight().overrideBrightness(0);
           }
         });
         freqParam.value().addValueObserver((value) -> {
@@ -382,18 +372,23 @@ public class TwisterSisterExtension extends ControllerExtension
         freqKnob.setShiftBinding(resParam);
 
         gainKnob.setShiftBinding(typeParam);
+        gainKnob.button().setDoubleClickedObserver(() -> {
+          if (typeParam.getAsDouble() != 0) {
+            typeParam.setImmediately(0);
+          }
+        });
 
         // freqKnob.button().setShiftButton(shiftButton);
         freqKnob.button().setDoubleClickedObserver(() -> {
           if (enabledParam.get() == 1) {
             enabledParam.setImmediately(0);
             freqKnob.rgbLight().overrideBrightness(0);
-            // gainKnob.ringLight().overrideBrightness(0);
+            freqKnob.ringLight().overrideBrightness(0);
           }
           else {
             enabledParam.setImmediately(1);
             freqKnob.rgbLight().overrideBrightness(255);
-            // gainKnob.ringLight().overrideBrightness(255);
+            freqKnob.ringLight().overrideBrightness(255);
           }
         });
 
