@@ -9,12 +9,17 @@ A Bitwig Studio controller extension for the
 - [Hardware](#hardware)
   - [Track & Device Bank (Bank 1)](#track--device-bank-bank-1)
     - [Notes](#notes)
-  - [User Mappable Bank (Bank 2-4)](#user-mappable-bank-bank-2-4)
+  - [4 (or 8) tracks Mixer (Bank 2)](#4-or-8-tracks-mixer-bank-2)
+  - [Eq Mode](#eq-mode-bank-3)
+  - [User Mappable Bank (Bank (3-4)-5)](#user-mappable-bank-bank-3-4-5)
 - [Options](#options)
   - [Show Bank Popup](#show-bank-popup)
   - [Device Row Color](#device-row-color)
   - [Global Fine Sensitivity](#global-fine-sensitivity)
   - [Pinned Indication](#pinned-indication)
+  - [Enable EQ 3rd Bank](#enable-eq-3rd-bank)
+  - [Dual twister mode](#dual-twister-mode)
+  - [Extender](#extender)
 - [Project Settings](#project-settings)
   - [User Mappable Knob Colors](#user-mappable-knob-colors)
 - [Specific Device Settings](#specific-device-settings)
@@ -105,7 +110,7 @@ control tracks which numbers are in parens.
 
 No further pages are planned here, if you get n-pages to work, please open an issue. :smile:
 
-## Eq Mode
+## Eq Mode (Bank 3)
 
 If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controller.
 
@@ -128,10 +133,7 @@ When switching mode, you need to restart the extensions in order to process the 
 
 This will behave poorly as both twisters will bind to the first 4-tracks
 
-
 #### Notes
-
-- The color palette on the Twister is very limited. Colors are matched as closely as possible.
 
 - If a device or parameter does not exist in the current context then the corresponding lights will
   be off.
@@ -144,7 +146,7 @@ This will behave poorly as both twisters will bind to the first 4-tracks
 - See the section on [pinned indication](#pinned-indication) for information on how track and device
   pinned state is indicated by the RGB LEDs.
 
-### User Mappable Bank (Bank (3)-4-5)
+### User Mappable Bank (Bank (3-4)-5)
 
 | Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
 | ---- | ------------------- | --------------- | ----------------- | --------------- |
