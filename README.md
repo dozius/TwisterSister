@@ -27,6 +27,23 @@ This is twister sister, with those mods:
 - Bank2/knob3 (top-right): click = previous fader page
 - Bank2/knob3-4 (top-right): long-click = get in/out group
 
+- Bank 3 can be a EQ+ control
+- Added a 5th bank for user.
+
+## Eq Mode
+
+If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controller.
+
+- Bank3/knob on 1st and 3rd row:
+    - twist = set frequency
+    - click + twist = set Q
+    - double-click = mute band (freq led turn off)
+- bank3/knob on 2nd and 4th row:
+    - twist = set gain
+    - click + twist = set filter type
+    - click + twist full-left = turn band off (gain led turns off)
+- RGB roughly matches Bitwig' frequency display
+
 ## dual twister mode
 
 - enable dual mode for 8-track pages

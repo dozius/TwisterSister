@@ -19,6 +19,7 @@ package io.github.dozius;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.bitwig.extension.api.Color;
 import com.bitwig.extension.api.Host;
@@ -30,6 +31,7 @@ import com.bitwig.extension.controller.api.CursorRemoteControlsPage;
 import com.bitwig.extension.controller.api.CursorTrack;
 import com.bitwig.extension.controller.api.Device;
 import com.bitwig.extension.controller.api.DeviceBank;
+import com.bitwig.extension.controller.api.DeviceMatcher;
 import com.bitwig.extension.controller.api.DocumentState;
 import com.bitwig.extension.controller.api.HardwareSurface;
 import com.bitwig.extension.controller.api.MidiIn;
@@ -43,6 +45,8 @@ import com.bitwig.extension.controller.api.Send;
 import com.bitwig.extension.controller.api.SendBank;
 import com.bitwig.extension.controller.api.SettableBooleanValue;
 import com.bitwig.extension.controller.api.SettableRangedValue;
+import com.bitwig.extension.controller.api.SpecificBitwigDevice;
+import com.bitwig.extension.controller.api.SpecificPluginDevice;
 import com.bitwig.extension.controller.api.Track;
 import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.TrackBank;
@@ -82,6 +86,11 @@ public class TwisterSisterExtension extends ControllerExtension
   private OnOffColorSupplier deviceSpecific2ColorSupplier;
   private SettableEnumValue pinnedAnimationValue;
 
+  private DeviceMatcher eqDeviceMatcher;
+  private DeviceBank eqFilterDeviceBank;
+  public Device device;
+
+  public final UUID EQ_ID = java.util.UUID.fromString("e4815188-ba6f-4d14-bcfc-2dcb8f778ccb");
   protected TwisterSisterExtension(final TwisterSisterExtensionDefinition definition,
                                    final ControllerHost host)
   {
@@ -109,9 +118,17 @@ public class TwisterSisterExtension extends ControllerExtension
 
     loadPreferences();
 
+    eqDeviceMatcher = host.createBitwigDeviceMatcher(EQ_ID);
+    if(twister.eq) {
+      setupEQKbobs();
+    }
     setupTrackBank();
     setupFourTrackBank();
-    setupUserBanks();
+    if(twister.eq) {
+      setupUserBanks(3);
+    } else {
+      setupUserBanks(2);
+    }
     setupBankButtons();
 
     twister.setActiveBank(0);
@@ -165,6 +182,9 @@ public class TwisterSisterExtension extends ControllerExtension
     final Preferences preferences = getHost().getPreferences();
 
     // Enable/disable notification popups on bank change
+    final SettableBooleanValue enableEqBank = preferences.getBooleanSetting("Enable EQ 3rd Bank", "Options", false);
+    twister.setEq(enableEqBank.get());
+    enableEqBank.addValueObserver(twister::setEq);
     final SettableBooleanValue dual = preferences.getBooleanSetting("Dual Twister Mode", "Options", false);
     twister.setDual(dual.get());
     dual.addValueObserver(twister::setDual);
@@ -261,11 +281,11 @@ public class TwisterSisterExtension extends ControllerExtension
   }
 
   /** Sets up all the hardware for all 3 user banks. */
-  private void setupUserBanks()
+  private void setupUserBanks(int firstBank)
   {
     final UserColorSettings colorSettings = new UserColorSettings(documentState);
 
-    for (int bank = 2; bank < twister.banks.length; ++bank) {
+    for (int bank = firstBank; bank < twister.banks.length; ++bank) {
       final TwisterKnob[] knobs = twister.banks[bank].knobs;
       final int settingsBank = bank - 1;
 
@@ -288,14 +308,117 @@ public class TwisterSisterExtension extends ControllerExtension
     }
   }
 
+  private void setupEQKbobs() {
+
+    eqFilterDeviceBank = cursorTrack.createDeviceBank(1);
+    eqFilterDeviceBank.setDeviceMatcher(eqDeviceMatcher);
+    final Device device = eqFilterDeviceBank.getItemAt(0);
+    // Track tb = trackBank.getItemAt(0);
+    final TwisterKnob[] knobs = twister.banks[2].knobs;
+    TwisterButton shiftButton;
+
+    if ( twister.ext1 ) {
+      shiftButton = twister.banks[2].rightSideButtons[2];
+    } else {
+      shiftButton = twister.banks[2].leftSideButtons[2];
+    }
+
+    shiftButton.isPressed().markInterested();
+    setupUIFollowsCursor(cursorTrack);
+    // tb.color().markInterested();
+    final SpecificBitwigDevice specificEQDevice = device.createSpecificBitwigDevice(EQ_ID);
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 4; j++) {
+        final Parameter enabledParam = specificEQDevice.createParameter(String.format("ENABLE%d", j + 1 + 4 * i));
+        final Parameter freqParam = specificEQDevice.createParameter(String.format("FREQ%d", j + 1 + 4 * i));
+        final Parameter gainParam = specificEQDevice.createParameter(String.format("GAIN%d", j + 1 + 4 * i));
+        final Parameter resParam = specificEQDevice.createParameter(String.format("Q%d", j + 1 + 4 * i));
+        final Parameter typeParam = specificEQDevice.createParameter(String.format("TYPE%d", j + 1 + 4 * i));
+
+
+        final TwisterKnob freqKnob = knobs[j + (i * 8)];
+        freqKnob.rgbLight().overrideBrightness(0);;
+        // freqKnob.ringLight().overrideBrightness(0);;
+        final TwisterKnob gainKnob = knobs[4 + j + (i * 8)];
+        gainKnob.rgbLight().overrideBrightness(0);
+        // gainKnob.ringLight().overrideBrightness(0);;
+
+        freqParam.markInterested();
+        gainParam.markInterested();
+        enabledParam.markInterested();
+        resParam.markInterested();
+        typeParam.markInterested();
+
+        enabledParam.value().addValueObserver((value) -> {
+          if (value > 0.0) {
+            freqKnob.rgbLight().overrideBrightness(255);
+          } else {
+            freqKnob.rgbLight().overrideBrightness(0);
+          }
+        });
+
+        typeParam.value().addValueObserver((value) -> {
+          if (value > 0.0) {
+            gainKnob.rgbLight().overrideBrightness(255);
+            // gainKnob.ringLight().overrideBrightness(255);
+            if (enabledParam.getAsDouble() > 0.0) {
+              freqKnob.rgbLight().overrideBrightness(255);
+            } else {
+              freqKnob.rgbLight().overrideBrightness(0);
+            }
+          } else {
+            gainKnob.rgbLight().overrideBrightness(0);
+            // gainKnob.ringLight().overrideBrightness(0);
+          }
+        });
+        freqParam.value().addValueObserver((value) -> {
+          freqKnob.rgbLight().setRawValue((int) (80 - value * 64));
+          gainKnob.rgbLight().setRawValue((int) (80 - value * 64));
+        });
+
+        freqKnob.setBinding(freqParam);
+        gainKnob.setBinding(gainParam);
+
+        freqKnob.setShiftBinding(resParam);
+
+        gainKnob.setShiftBinding(typeParam);
+
+        // freqKnob.button().setShiftButton(shiftButton);
+        freqKnob.button().setDoubleClickedObserver(() -> {
+          if (enabledParam.get() == 1) {
+            enabledParam.setImmediately(0);
+            freqKnob.rgbLight().overrideBrightness(0);
+            // gainKnob.ringLight().overrideBrightness(0);
+          }
+          else {
+            enabledParam.setImmediately(1);
+            freqKnob.rgbLight().overrideBrightness(255);
+            // gainKnob.ringLight().overrideBrightness(255);
+          }
+        });
+
+        freqKnob.ringLight().observeValue(freqParam.value());
+        gainKnob.ringLight().observeValue(gainParam.value());
+        freqKnob.shiftRingLight().observeValue(resParam.value());
+        gainKnob.shiftRingLight().observeValue(typeParam.value());
+
+      }
+    }
+  }
   /** Sets up all the track related knobs. Track select, volume, pan, etc. */
   private void addTrackKnobs()
   {
+
     // final TrackBank trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, true, false);
     Track tb = trackBank.getItemAt(0);
 
     final TwisterKnob[] knobs = twister.banks[0].knobs;
-    final TwisterButton shiftButton = twister.banks[0].rightSideButtons[2];
+    TwisterButton shiftButton;
+    if ( twister.ext1 ) {
+      shiftButton = twister.banks[0].rightSideButtons[2];
+    } else {
+      shiftButton = twister.banks[0].leftSideButtons[2];
+    }
     
     final SendBank sendBank = tb.sendBank();
     final Send send1 = sendBank.getItemAt(0);
