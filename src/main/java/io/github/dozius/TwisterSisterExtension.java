@@ -461,28 +461,28 @@ public class TwisterSisterExtension extends ControllerExtension
     send1Knob.ringLight().observeValue(send1.value());
     send1Knob.rgbLight().setColorSupplier(send1.sendChannelColor());
     send1Knob.button().setShiftButton(shiftButton);
-    send1Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    send1Knob.button().addClickedObserver(() -> sendBank.scrollBackwards());
 
     final TwisterKnob send2Knob = knobs[3];
     send2Knob.setBinding(send2);
     send2Knob.ringLight().observeValue(send2.value());
     send2Knob.rgbLight().setColorSupplier(send2.sendChannelColor());
     send2Knob.button().setShiftButton(shiftButton);
-    send2Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    send2Knob.button().addClickedObserver(() -> sendBank.scrollForwards());
 
     final TwisterKnob send3Knob = knobs[6];
     send3Knob.setBinding(send3);
     send3Knob.ringLight().observeValue(send3.value());
     send3Knob.rgbLight().setColorSupplier(send3.sendChannelColor());
     send3Knob.button().setShiftButton(shiftButton);
-    send3Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    // send3Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
 
     final TwisterKnob send4Knob = knobs[7];
     send4Knob.setBinding(send4);
     send4Knob.ringLight().observeValue(send4.value());
     send4Knob.rgbLight().setColorSupplier(send4.sendChannelColor());
     send4Knob.button().setShiftButton(shiftButton);
-    send4Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
+    // send4Knob.button().addClickedObserver(() -> circularScrollForward(sendBank));
   }
 
   /** Sets up all the track related knobs. Track select, volume, pan, etc. */
