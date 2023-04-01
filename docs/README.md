@@ -110,7 +110,19 @@ control tracks which numbers are in parens.
 
 No further pages are planned here, if you get n-pages to work, please open an issue. :smile:
 
-## Eq Mode (Bank 3)
+#### dual twister mode
+
+- enable dual mode for 8-track pages
+- set a second twister in dual mode + extender to get 4-8 tracks' control
+- in extender mode, bank buttons are on the right
+
+When switching mode, you need to restart the extensions in order to process the config change
+
+#### two single mode twister
+
+This will behave poorly as both twisters will bind to the first 4-tracks
+
+### Eq Mode (Bank 3)
 
 If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controller.
 
@@ -120,18 +132,6 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
 | 5-8  | Band 1-4 gain         |  Band 1-4 Type   | Turn band off    | Freq color & OFF:Off    |
 | 9-12 | Band 5-8 frequency    |  Band 5-8 Q      | Mute band        | Freq color & mute:off   |
 | 13-16| Band 5-8 gain         |  Band 5-8 Type   | Turn band off    | Freq color & OFF:Off    |
-
-## dual twister mode
-
-- enable dual mode for 8-track pages
-- set a second twister in dual mode + extender to get 4-8 tracks' control
-- in extender mode, bank buttons are on the right
-
-When switching mode, you need to restart the extensions in order to process the config change
-
-## two single mode twister
-
-This will behave poorly as both twisters will bind to the first 4-tracks
 
 #### Notes
 
