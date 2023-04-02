@@ -23,7 +23,7 @@
         </os>
       </activation>
       <properties>
-        <bitwig.extension.directory>D:\Users_Directory\yoann\Documents\Bitwig Studio\Extensions</bitwig.extension.directory>
+        <bitwig.extension.directory>${env.USERPROFILE}\Documents\Bitwig Studio\Extensions</bitwig.extension.directory>
       </properties>
     </profile>
     <profile>
