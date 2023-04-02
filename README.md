@@ -28,7 +28,10 @@ This is twister sister, with those mods:
 - Bank2/knob3-4 (top-right): long-click = get in/out group
 
 - Bank 3 can be a EQ+ control
-- Added a 5th bank for user.
+- Bank 3 (4, if EQ is enabled) can be the specific Devices setting
+
+The fork brings in a bunch of settings, but they need the extension to be reset! Use the power
+button in extension setting to restart it when enabling/disabling banks.
 
 ## Eq Mode
 
@@ -43,6 +46,12 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
     - click + twist = set filter type
     - double-click = turn band off (re-enable by setting a filter type)
 - RGB under knob matches Bitwig' :rainbow: frequency display
+
+## Specific controller mode
+
+Basically the 2 specific device knob from dozius, but they're 16, on a dedicated bank.
+
+(map'em with the toml file :) )
 
 ## dual twister mode
 
