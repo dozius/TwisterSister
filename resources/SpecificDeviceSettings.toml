@@ -1,6 +1,10 @@
-# []controls
-# knob1 = [] # param keys that will be bound to knob 1
-# knob2 = [] # param keys that will be bound to knob 2
+
+
+[controls]
+knob1 = [] # param keys that will be bound to knob 1
+knob2 = [] # param keys that will be bound to knob 2
+
+# set knobs up to 16 !
 
 # Example
 # [controls]

@@ -11,7 +11,7 @@ User documentation, including installation instructions, can be found [here](doc
 
 # Fork considerations
 
-This is twister sister, with those mods: 
+This is twister sister, with those mods:
 
 - replace user controls and pan knob with more sends
 - add bank2 , controlling 4 consecutive tracks (faders on 4th row), and 3 sends (3 first rows)

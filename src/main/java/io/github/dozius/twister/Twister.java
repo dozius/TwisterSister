@@ -59,7 +59,7 @@ public class Twister
     public final TwisterButton[] rightSideButtons = new TwisterButton[NUM_RIGHT_SIDE_BUTTONS];
   }
 
-  public static final int NUM_BANKS = 5;
+  public static final int NUM_BANKS = 4;
 
   public final Bank[] banks = new Bank[NUM_BANKS];
 
@@ -71,6 +71,7 @@ public class Twister
   public boolean ext1 = false;
   public boolean dual = false;
   public boolean eq = false;
+  public boolean spec = false;
   private int activeBank = -1;
 
   /**
@@ -149,6 +150,9 @@ public class Twister
     popupEnabled = enabled;
   }
 
+  public void setSpecific(boolean spec_status) {
+    spec = spec_status;
+  }
   public void setEq(boolean eq_status) {
     eq = eq_status;
   }

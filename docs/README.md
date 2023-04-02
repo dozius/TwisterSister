@@ -91,7 +91,7 @@ A Bitwig Studio controller extension for the
 
 **NOTE**: the 8-track mode will require _2 MF-Twister modules_
 
-Use `dual twister mode` to have 8 track pages, if you have 2 MFTs. 
+Use `dual twister mode` to have 8 track pages, if you have 2 MFTs.
 (in this mode, bank buttons are moved to the left, for your convenience so you can have your
 MFTs side-to-side :smile:)
 
@@ -133,6 +133,19 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
 | 9-12 | Band 5-8 frequency    |  Band 5-8 Q      | Mute band        | Freq color & mute:off   |
 | 13-16| Band 5-8 gain         |  Band 5-8 Type   | Turn band off    | Freq color & OFF:Off    |
 
+If disabled, bank 3 is a User-mappable bank.
+
+### Specific Device Mode (Bank 3 or 4)
+
+This will be the 4th bank if EQ is enabled, 3rd otherwise.
+
+If you check `Specific device`, the knobs will map to what's set in your Specific-Device toml file.
+Please refer to [Specific device section](#specific-device-settings) to set it up.
+
+| Knob | Twist                 | Hold & Twist     | Double-click     | RGB Light               |
+| ---- | --------------------- | ---------------- | ---------------- | ----------------------- |
+| 1-16 | Value                 |  -               | Reset value      | User & off:unmapped     |
+
 #### Notes
 
 - If a device or parameter does not exist in the current context then the corresponding lights will
@@ -146,7 +159,10 @@ If you check `Enable EQ 3rd band`, the 3rd bank become the closest EQ+ controlle
 - See the section on [pinned indication](#pinned-indication) for information on how track and device
   pinned state is indicated by the RGB LEDs.
 
-### User Mappable Bank (Bank (3-4)-5)
+### User Mappable Bank (Bank (3-4))
+
+Those knobs pages are taken over by EQ and Specific Device assign.
+MFT will handle "only" 4 banks.
 
 | Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
 | ---- | ------------------- | --------------- | ----------------- | --------------- |
@@ -189,11 +205,15 @@ animations are described in the twister user manual.
 
 When a track or device is pinned, the MIDI Fighter Twister will not follow the current track or device selected with the mouse or another controller. Info about the state of a pinned track or device is available in the Studio I/O panel in Bitwig Studio.
 
-### Enable EQ 3rd Bank
+### Enable EQ
 
 Enable EQ control for 3rd bank instead of user mappings.
 
 EQ controls are described above, it will attach to the last EQ+ on currently selected track.
+
+### Enable Specific device 
+
+Enable specific devices for 3rd (or 4th) bank instead of user mappings.
 
 ### Dual twister mode
 

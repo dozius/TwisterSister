@@ -17,6 +17,8 @@
  */
 package io.github.dozius;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.bitwig.extension.api.Color;
@@ -46,6 +48,7 @@ import com.bitwig.extension.controller.api.SettableEnumValue;
 import com.bitwig.extension.controller.api.TrackBank;
 import com.bitwig.extension.controller.ControllerExtension;
 
+import io.github.dozius.settings.AbstractDeviceSetting;
 import io.github.dozius.settings.UserColorSettings;
 import io.github.dozius.settings.SpecificDeviceSettings;
 import io.github.dozius.twister.Twister;
@@ -66,22 +69,22 @@ public class TwisterSisterExtension extends ControllerExtension
   public Twister twister;
   public CursorTrack cursorTrack;
   public CursorTrack cursorFourTrack;
-
   public TrackBank trackBank;
   public TrackBank trackBankFour;
 
   private DocumentState documentState;
+  public SpecificDeviceSettings specificDeviceSettings;
   private OnOffColorSupplier deviceColorSupplier;
   private OnOffColorSupplier devicePageColorSupplier;
-  private OnOffColorSupplier deviceSpecific1ColorSupplier;
-  private OnOffColorSupplier deviceSpecific2ColorSupplier;
+  private OnOffColorSupplier[] deviceSpecificColorSuppliers = new OnOffColorSupplier[16];
   private SettableEnumValue pinnedAnimationValue;
 
   private DeviceMatcher eqDeviceMatcher;
   private DeviceBank eqFilterDeviceBank;
   public Device device;
 
-  public final UUID EQ_ID = java.util.UUID.fromString("e4815188-ba6f-4d14-bcfc-2dcb8f778ccb");
+  public final UUID EQ_PLUS_ID = java.util.UUID.fromString("e4815188-ba6f-4d14-bcfc-2dcb8f778ccb");
+
   protected TwisterSisterExtension(final TwisterSisterExtensionDefinition definition,
                                    final ControllerHost host)
   {
@@ -98,30 +101,25 @@ public class TwisterSisterExtension extends ControllerExtension
     hardwareSurface = host.createHardwareSurface();
     twister = new Twister(this);
     documentState = host.getDocumentState();
-    new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
+    specificDeviceSettings = new SpecificDeviceSettings(getSpecificDeviceSettingsPath());
     cursorTrack = host.createCursorTrack("0", "one", 4, 1, true);
     cursorFourTrack = host.createCursorTrack("1", "multi", 3, 1, true);
 
     deviceColorSupplier = new OnOffColorSupplier();
     devicePageColorSupplier = new OnOffColorSupplier();
-    deviceSpecific1ColorSupplier = new OnOffColorSupplier();
-    deviceSpecific2ColorSupplier = new OnOffColorSupplier();
+    for(int idx = 0; idx < 16; idx++) {
+      deviceSpecificColorSuppliers[idx] = new OnOffColorSupplier();
+    }
 
     loadPreferences();
-
-    eqDeviceMatcher = host.createBitwigDeviceMatcher(EQ_ID);
-    if(twister.eq) {
-      setupEQKbobs();
-    }
     setupTrackBank();
     setupFourTrackBank();
-    if(twister.eq) {
-      setupUserBanks(3);
-    } else {
-      setupUserBanks(2);
-    }
+    eqDeviceMatcher = host.createBitwigDeviceMatcher(EQ_PLUS_ID);
+    int adds = 2;
+    if(twister.eq) { setupEQKbobs(adds); adds += 1; }
+    if(twister.spec) { setupSpecKnobs(adds); adds += 1; }
+    if (adds < 4) { setupUserBanks(adds); }
     setupBankButtons();
-
     twister.setActiveBank(0);
   }
 
@@ -172,37 +170,33 @@ public class TwisterSisterExtension extends ControllerExtension
   {
     final Preferences preferences = getHost().getPreferences();
 
-    // Enable/disable notification popups on bank change
-    final SettableBooleanValue enableEqBank = preferences.getBooleanSetting("Enable EQ 3rd Bank", "Options", false);
+    final SettableBooleanValue enableSpecBank = preferences.getBooleanSetting("Specific Device", "Options", false);
+    twister.setSpecific(enableSpecBank.get());
+    enableSpecBank.addValueObserver(twister::setSpecific);
+
+    final SettableBooleanValue enableEqBank = preferences.getBooleanSetting("EQ", "Options", false);
     twister.setEq(enableEqBank.get());
     enableEqBank.addValueObserver(twister::setEq);
     final SettableBooleanValue dual = preferences.getBooleanSetting("Dual Twister Mode", "Options", false);
     twister.setDual(dual.get());
     dual.addValueObserver(twister::setDual);
 
-    final SettableBooleanValue ext1 = preferences.getBooleanSetting("Extender",
-                                                                            "Options", false);
+    final SettableBooleanValue ext1 = preferences.getBooleanSetting("Extender", "Options", false);
     twister.setExtender1(ext1.get());
     ext1.addValueObserver(twister::setExtender1);
 
-    final SettableBooleanValue popupEnabled = preferences.getBooleanSetting("Show Bank Popup",
-                                                                            "Options", false);
+    final SettableBooleanValue popupEnabled = preferences.getBooleanSetting("Show Bank Popup", "Options", false);
     twister.setPopupEnabled(popupEnabled.get());
     popupEnabled.addValueObserver(twister::setPopupEnabled);
 
     // Set the color used for the row of controls related to devices, i.e. second row
-    final SettableRangedValue deviceRowColor = preferences.getNumberSetting("Device Row Color",
-                                                                            "Options", 0, 125, 1,
-                                                                            null, 115);
+    final SettableRangedValue deviceRowColor = preferences.getNumberSetting("Device Row Color", "Options", 0, 125, 1, null, 115);
     setDeviceRowColor(TwisterColors.ALL.get((int) deviceRowColor.getRaw()));
     deviceRowColor.addValueObserver(125,
                                     (value) -> setDeviceRowColor(TwisterColors.ALL.get(value)));
 
     // Sets the fine sensitivity factor for all knobs
-    final SettableRangedValue globalFineSensitivity = preferences.getNumberSetting("Global Fine Sensitivity",
-                                                                                   "Options", 0.01,
-                                                                                   1.00, 0.01, null,
-                                                                                   0.25);
+    final SettableRangedValue globalFineSensitivity = preferences.getNumberSetting("Global Fine Sensitivity", "Options", 0.01, 1.00, 0.01, null, 0.25);
     setGlobalFineSensitivity(globalFineSensitivity.get());
     globalFineSensitivity.addValueObserver(this::setGlobalFineSensitivity);
 
@@ -222,8 +216,10 @@ public class TwisterSisterExtension extends ControllerExtension
   {
     deviceColorSupplier.setOnColor(color);
     devicePageColorSupplier.setOnColor(color);
-    deviceSpecific1ColorSupplier.setOnColor(color);
-    deviceSpecific2ColorSupplier.setOnColor(color);
+
+    for (int i = 0; i < deviceSpecificColorSuppliers.length; i++) {
+      deviceSpecificColorSuppliers[i].setOnColor(color);
+    }
   }
 
   /**
@@ -260,7 +256,7 @@ public class TwisterSisterExtension extends ControllerExtension
   /** Sets up all the hardware for the track bank. */
   private void setupTrackBank()
   {
-    trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, false, false); 
+    trackBank = cursorTrack.createSiblingsTrackBank(1, 4, 1, false, false);
     addTrackKnobs();
     addDeviceKnobs();
   }
@@ -278,7 +274,7 @@ public class TwisterSisterExtension extends ControllerExtension
 
     for (int bank = firstBank; bank < twister.banks.length; ++bank) {
       final TwisterKnob[] knobs = twister.banks[bank].knobs;
-      final int settingsBank = bank - 1;
+      final int settingsBank = bank - 2;
 
       for (int idx = 0; idx < knobs.length; ++idx) {
         final TwisterKnob knob = knobs[idx];
@@ -299,25 +295,38 @@ public class TwisterSisterExtension extends ControllerExtension
     }
   }
 
-  private void setupEQKbobs() {
+  private void setupSpecKnobs(int bankNumber) {
+    final TwisterKnob[] knobs = twister.banks[bankNumber].knobs;
+    final PinnableCursorDevice cursorDevice = cursorTrack.createCursorDevice();
+    setupUIFollowsCursor(cursorTrack);
+    for (int idx = 0; idx < knobs.length; idx++) {
+      cursorTrack.exists().addValueObserver(deviceSpecificColorSuppliers[idx]::setOn);
+      // cursorDevice.exists().addValueObserver(deviceSpecificColorSuppliers[idx]::setOn);
+      final TwisterKnob knob = knobs[idx];
+      knob.ringLight().observeValue(knob.targetValue());
+      setupSpecificDeviceKnob(String.format("knob%d", idx + 1), knob, cursorDevice, deviceSpecificColorSuppliers[idx]);
+    }
+  }
+
+  private void setupEQKbobs(int bankNumber) {
 
     eqFilterDeviceBank = cursorTrack.createDeviceBank(1);
     eqFilterDeviceBank.setDeviceMatcher(eqDeviceMatcher);
     final Device device = eqFilterDeviceBank.getItemAt(0);
     // Track tb = trackBank.getItemAt(0);
-    final TwisterKnob[] knobs = twister.banks[2].knobs;
+    final TwisterKnob[] knobs = twister.banks[bankNumber].knobs;
     TwisterButton shiftButton;
 
     if ( twister.ext1 ) {
-      shiftButton = twister.banks[2].rightSideButtons[2];
+      shiftButton = twister.banks[bankNumber].rightSideButtons[2];
     } else {
-      shiftButton = twister.banks[2].leftSideButtons[2];
+      shiftButton = twister.banks[bankNumber].leftSideButtons[2];
     }
 
     shiftButton.isPressed().markInterested();
     setupUIFollowsCursor(cursorTrack);
     // tb.color().markInterested();
-    final SpecificBitwigDevice specificEQDevice = device.createSpecificBitwigDevice(EQ_ID);
+    final SpecificBitwigDevice specificEQDevice = device.createSpecificBitwigDevice(EQ_PLUS_ID);
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 4; j++) {
         final Parameter enabledParam = specificEQDevice.createParameter(String.format("ENABLE%d", j + 1 + 4 * i));
@@ -414,18 +423,18 @@ public class TwisterSisterExtension extends ControllerExtension
     } else {
       shiftButton = twister.banks[0].leftSideButtons[2];
     }
-    
+ 
     final SendBank sendBank = tb.sendBank();
     final Send send1 = sendBank.getItemAt(0);
     final Send send2 = sendBank.getItemAt(1);
     final Send send3 = sendBank.getItemAt(2);
     final Send send4 = sendBank.getItemAt(3);
-    
+ 
     final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorTrack);
 
     shiftButton.isPressed().markInterested();
     tb.color().markInterested();
-    
+ 
     sendBank.canScrollForwards().markInterested();
     sendBank.itemCount().markInterested();
     send1.sendChannelColor().markInterested();
@@ -489,12 +498,12 @@ public class TwisterSisterExtension extends ControllerExtension
   private void addFourTrackKnobs()
   {
     final TwisterKnob[] knobs = twister.banks[1].knobs;
-    
+ 
     setupUIFollowsCursor(cursorTrack);
 
     final TrackGroupNavigator trackGroupNavigator = new TrackGroupNavigator(cursorFourTrack);
     TwisterKnob nBank = knobs[3];
-      nBank.button().addClickedObserver(() -> { 
+      nBank.button().addClickedObserver(() -> {
         for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorFourTrack.selectNext();
       });
       nBank.button().addLongPressedObserver(() -> trackGroupNavigator.navigateGroups(false));
@@ -504,7 +513,7 @@ public class TwisterSisterExtension extends ControllerExtension
         for (int i = 0; i < (twister.dual ? 8 : 4); i++) cursorFourTrack.selectPrevious();
       });
       pBank.button().addLongPressedObserver(() -> trackGroupNavigator.navigateGroups(false));
-  
+ 
     int offset = 0;
     if (twister.ext1) {
       offset = 4;
@@ -514,7 +523,7 @@ public class TwisterSisterExtension extends ControllerExtension
 
       tb.color().markInterested();
       final SendBank sb = tb.sendBank();
-      
+ 
       for (int j = 0; j < 3; j++) {
         Send send = sb.getItemAt(j);
         send.sendChannelColor().markInterested();
@@ -656,6 +665,69 @@ public class TwisterSisterExtension extends ControllerExtension
     }
     else {
       bank.scrollBy(-(bank.itemCount().get() - 1));
+    }
+  }
+
+  /**
+   * Sets up a knob to control a specific device control parameter based on key name.
+   *
+   * @param controlKey    The controls key to apply to the knob.
+   * @param knob          The knob to setup.
+   * @param device        The device used to create the parameters.
+   */
+  private void setupSpecificDeviceKnob(String controlKey, TwisterKnob knob, Device device, OnOffColorSupplier colorSupplier)
+  {
+    knob.rgbLight().setColorSupplier(colorSupplier);
+    knob.button().addClickedObserver(knob::toggleSensitivity);
+    final Set<String> keys = specificDeviceSettings.controlMap().get(controlKey);
+
+    if (keys == null) {
+      knob.rgbLight().setRawValue(127);
+      return;
+    }
+
+    for (String key : keys) {
+      if(specificDeviceSettings.bitwigDevices() != null) {
+        bindSpecificDevices(specificDeviceSettings.bitwigDevices(), key, device, knob, colorSupplier);
+      }
+      if(specificDeviceSettings.vst2Devices() != null) {
+        bindSpecificDevices(specificDeviceSettings.vst2Devices(), key, device, knob, colorSupplier);
+      }
+      if(specificDeviceSettings.vst3Devices() != null) {
+        bindSpecificDevices(specificDeviceSettings.vst3Devices(), key, device, knob, colorSupplier);
+      }
+    }
+  }
+  /**
+   * Binds all available parameters from all devices that match the key.
+   *
+   * @param <IdType>      The type of the device ID. This will be deduced from settings.
+   * @param <SettingType> The type of device settings object. This will be deduced from settings.
+   * @param settings      The list of device settings to search.
+   * @param key           The parameter key to match against.
+   * @param device        The device used to create parameters.
+   * @param knob          The knob to bind parameters to.
+   */
+  private <IdType, SettingType extends AbstractDeviceSetting<IdType, ?>> void bindSpecificDevices(List<SettingType> settings,
+                                                                                                  String key,
+                                                                                                  Device device,
+                                                                                                  TwisterKnob knob,
+                                                                                                  OnOffColorSupplier colorSupplier)
+  {
+    for (final SettingType setting : settings) {
+      if (setting.parameters().get(key) == null) { continue; }
+
+      final Parameter param = setting.createParameter(device, key);
+      knob.ringLight().observeValue(param.value());
+
+      param.exists().markInterested();
+      param.exists().addValueObserver((exists) -> {
+        if (exists) {
+          knob.setBinding(param);
+          knob.button().setDoubleClickedObserver(param::reset);
+        }
+        colorSupplier.setOn(exists);
+      });
     }
   }
 }
