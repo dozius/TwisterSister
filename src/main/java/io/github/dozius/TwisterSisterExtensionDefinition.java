@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Dan Smith
+ * Copyright 2021-2023 Dan Smith
  *
  * This file is part of Twister Sister.
  *
