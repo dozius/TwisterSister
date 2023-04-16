@@ -7,6 +7,8 @@ assignees: dozius
 
 ---
 
+Before filing a bug report make sure you have followed the [installation instructions](https://github.com/dozius/TwisterSister/blob/main/docs/README.md#installation).
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -27,3 +29,5 @@ If applicable, add screenshots to help explain your problem.
  - OS: [e.g. Windows]
  - Bitwig Version: [e.g. 4.4.10]
  - Extension Version: [e.g. 2.0.0]
+ - Device Firmware: [e.g. 02 Oct 2019]
+ - MIDI Fighter Utility Version: [e.g. 2.85]
