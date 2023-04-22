@@ -47,7 +47,7 @@ public class TwisterSisterExtensionDefinition extends ControllerExtensionDefinit
   @Override
   public String getVersion()
   {
-    return "2.0.0~0.3";
+    return "2.0.0~0.4";
   }
 
   @Override
@@ -71,7 +71,7 @@ public class TwisterSisterExtensionDefinition extends ControllerExtensionDefinit
   @Override
   public int getRequiredAPIVersion()
   {
-    return 15;
+    return 18;
   }
 
   @Override

@@ -174,7 +174,7 @@ public class TwisterSisterExtension extends ControllerExtension
     twister.setSpecific(enableSpecBank.get());
     enableSpecBank.addValueObserver(twister::setSpecific);
 
-    final SettableBooleanValue enableEqBank = preferences.getBooleanSetting("EQ", "Options", false);
+    final SettableBooleanValue enableEqBank = preferences.getBooleanSetting("EQ Page", "Options", false);
     twister.setEq(enableEqBank.get());
     enableEqBank.addValueObserver(twister::setEq);
     final SettableBooleanValue dual = preferences.getBooleanSetting("Dual Twister Mode", "Options", false);
@@ -325,7 +325,6 @@ public class TwisterSisterExtension extends ControllerExtension
 
     shiftButton.isPressed().markInterested();
     setupUIFollowsCursor(cursorTrack);
-    // tb.color().markInterested();
     final SpecificBitwigDevice specificEQDevice = device.createSpecificBitwigDevice(EQ_PLUS_ID);
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 4; j++) {
@@ -336,11 +335,9 @@ public class TwisterSisterExtension extends ControllerExtension
         final Parameter typeParam = specificEQDevice.createParameter(String.format("TYPE%d", j + 1 + 4 * i));
 
         final TwisterKnob freqKnob = knobs[j + (i * 8)];
-        freqKnob.rgbLight().overrideBrightness(0);;
-        // freqKnob.ringLight().overrideBrightness(0);;
+        freqKnob.rgbLight().overrideBrightness(0);
         final TwisterKnob gainKnob = knobs[4 + j + (i * 8)];
         gainKnob.rgbLight().overrideBrightness(0);
-        // gainKnob.ringLight().overrideBrightness(0);;
 
         freqParam.markInterested();
         gainParam.markInterested();
@@ -405,7 +402,6 @@ public class TwisterSisterExtension extends ControllerExtension
         gainKnob.ringLight().observeValue(gainParam.value());
         freqKnob.shiftRingLight().observeValue(resParam.value());
         gainKnob.shiftRingLight().observeValue(typeParam.value());
-
       }
     }
   }
