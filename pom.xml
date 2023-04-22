@@ -8,7 +8,7 @@
   <artifactId>twister-sister-tracteur</artifactId>
   <packaging>jar</packaging>
   <name>Twister Sister Tracteur</name>
-  <version>2.0.0~0.4</version>
+  <version>2.0.1~0.4</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -107,7 +107,7 @@
         </configuration>
       </plugin>
 
-      <!-- Package all dependecies except for the Bitwig API -->
+      <!-- Package dependecies -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -121,6 +121,7 @@
             <configuration>
               <artifactSet>
                 <excludes>
+                  <!-- Exclude Bitwig API -->
                   <exclude>com.bitwig:extension-api</exclude>
                 </excludes>
               </artifactSet>
@@ -133,6 +134,13 @@
                   </excludes>
                 </filter>
               </filters>
+              <relocations>
+                <relocation>
+                  <!-- Relocate Antlr to avoid conflicts with Bitwig -->
+                  <pattern>org.antlr</pattern>
+                  <shadedPattern>org.tomlj.internal.antlr</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
