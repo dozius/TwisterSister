@@ -10,7 +10,7 @@
   <files>
     <file>
       <source>${project.build.directory}/${project.build.finalName}.jar</source>
-      <destName>TwisterSister.bwextension</destName>
+      <destName>TwisterSisterTracteur.bwextension</destName>
     </file>
     <file>
       <source>resources/TwisterSister.mfs</source>

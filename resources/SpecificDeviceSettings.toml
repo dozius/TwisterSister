@@ -3,6 +3,20 @@
 [controls]
 knob1 = [] # param keys that will be bound to knob 1
 knob2 = [] # param keys that will be bound to knob 2
+knob3 = []
+knob4 = []
+knob5 = []
+knob6 = []
+knob7 = []
+knob8 = []
+knob9 = []
+knob10 = []
+knob11 = []
+knob12 = []
+knob13 = []
+knob14 = []
+knob15 = []
+knob16 = []
 
 # set knobs up to 16 !
 

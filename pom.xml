@@ -5,10 +5,10 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.dozius</groupId>
-  <artifactId>twister-sister</artifactId>
+  <artifactId>twister-sister-tracteur</artifactId>
   <packaging>jar</packaging>
-  <name>Twister Sister</name>
-  <version>2.0.0</version>
+  <name>Twister Sister Tracteur</name>
+  <version>2.0.1~0.4</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,13 +63,13 @@
     <dependency>
       <groupId>com.bitwig</groupId>
       <artifactId>extension-api</artifactId>
-      <version>17</version>
+      <version>18</version>
     </dependency>
 
     <dependency>
       <groupId>org.tomlj</groupId>
       <artifactId>tomlj</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
 
@@ -107,7 +107,7 @@
         </configuration>
       </plugin>
 
-      <!-- Package all dependecies except for the Bitwig API -->
+      <!-- Package dependecies -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -121,6 +121,7 @@
             <configuration>
               <artifactSet>
                 <excludes>
+                  <!-- Exclude Bitwig API -->
                   <exclude>com.bitwig:extension-api</exclude>
                 </excludes>
               </artifactSet>
@@ -133,6 +134,13 @@
                   </excludes>
                 </filter>
               </filters>
+              <relocations>
+                <relocation>
+                  <!-- Relocate Antlr to avoid conflicts with Bitwig -->
+                  <pattern>org.antlr</pattern>
+                  <shadedPattern>org.tomlj.internal.antlr</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -164,7 +172,7 @@
             </goals>
             <configuration>
               <sourceFile>${project.build.directory}/${project.build.finalName}.jar</sourceFile>
-              <destinationFile>${bitwig.extension.directory}/TwisterSister.bwextension</destinationFile>
+              <destinationFile>${bitwig.extension.directory}/TwisterSisterTracteur.bwextension</destinationFile>
             </configuration>
           </execution>
         </executions>
@@ -184,7 +192,7 @@
             </goals>
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
-              <finalName>TwisterSister-${project.version}</finalName>
+              <finalName>TwisterSisterTracteur-${project.version}</finalName>
               <descriptors>
                 <descriptor>release.xml</descriptor>
               </descriptors>
