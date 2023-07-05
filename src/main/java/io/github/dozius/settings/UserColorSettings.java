@@ -62,8 +62,7 @@ public class UserColorSettings
 
       for (int idx = 0; idx < settingsBank.length; ++idx) {
         final String label = String.format("Color %02d%" + (bank + 1) + "s", idx + 1, " ");
-        final SettableRangedValue colorSetting = documentState.getNumberSetting(label, "Colors", 0,
-                                                                                125, 1, null, 0);
+        final SettableRangedValue colorSetting = documentState.getNumberSetting(label, "Colors", 0, 125, 1, null, 0);
         settingsBank[idx] = colorSetting;
         ((Setting) colorSetting).hide();
       }

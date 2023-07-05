@@ -63,7 +63,8 @@ When switching mode, you need to restart the extensions in order to process the 
 
 ## two single mode twister
 
-This will behave poorly as both twisters will bind to the first 4-tracks
+This will behave poorly as both twisters will bind to the first 4-tracks, but with pins,
+this might work for you just fine.
 
 ## more twisters
 
@@ -71,7 +72,8 @@ hack it yourself.
 
 ## issues
 
-behaves poorly when tracks are pinned
+- behaves poorly when tracks are pinned
+- per-project user mapping don't save their color (since bw5.0.0)
 
 # build
 

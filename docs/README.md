@@ -66,17 +66,17 @@ A Bitwig Studio controller extension for the
 
 **Warning**: few settings were changed from upstream.
 
-| Knob | Twist                       | Click                     | Double Click    | Long Press                | Shift Click               | Shift Long Press | RGB Light                              |
-| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | ------------------------- | ---------------- | -------------------------------------- |
-| 1    | Select track                | Navigate groups (fold)    | -               | Toggle pinned             | Navigate groups (no fold) | Toggle arm       | Follow track color & pinned indication |
-| 2    | Track volume                | Toggle sensitivity        | Reset volume    | Toggle mute               |                           | -                | Follow track color                     |
-| 3    | Send 1                      | Scroll sends page fwd     | Reset pan       | Toggle solo               |                           | -                | Follow send1 color                      |
-| 4    | Send 2                      | Scroll sends page back    | -               | -                         |                           | -                | Follow send2 color                      |
-| 7    | Send 3                      | -                         | Reset parameter | Insert device before      |                           | -                | Follow send3 color                      |
-| 8    | Send 4                      | -                         | Reset parameter | Insert device after       |                           | -                | Follow send4 color                      |
-| 5    | Select device               | Toggle enable             | -               | Toggle pinned             | Toggle expand             | -                | Device row color & pinned indication   |
-| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls |                           | -                | Device row color                       |
-| 9-16 | Remote control parameter    | Toggle sensitivity        | Reset parameter | -                         |                           | -                | Remote control color                   |
+| Knob | Twist                       | Click                     | Double Click    | Long Press                | Shift Click     | Shift Long Press | RGB Light                              |
+| ---- | --------------------------- | ------------------------- | --------------- | ------------------------- | --------------- | ---------------- | -------------------------------------- |
+| 1    | Select track                | Navigate groups (fold)    | -               | Toggle pinned             | Exit group      | Toggle arm       | Follow track color & pinned indication |
+| 2    | Track volume                | Toggle sensitivity        | Reset volume    | Toggle mute               |                 | -                | Follow track color                     |
+| 3    | Send 1                      | Scroll sends page fwd     | Reset pan       | Toggle solo               |                 | -                | Follow send1 color                     |
+| 4    | Send 2                      | Scroll sends page back    | -               | -                         |                 | -                | Follow send2 color                     |
+| 7    | Send 3                      | -                         | Reset parameter | Insert device before      |                 | -                | Follow send3 color                     |
+| 8    | Send 4                      | -                         | Reset parameter | Insert device after       |                 | -                | Follow send4 color                     |
+| 5    | Select device               | Toggle enable             | -               | Toggle pinned             | Toggle expand   | -                | Device row color & pinned indication   |
+| 6    | Select remote controls page | Show/hide device UI       | -               | Show/Hide remote controls |                 | -                | Device row color                       |
+| 9-16 | Remote control parameter    | Toggle sensitivity        | Reset parameter | -                         |                 | -                | Remote control color                   |
 
 | Side Button  | Action    |
 | ------------ | --------- |
@@ -99,14 +99,14 @@ Use `Extender` in settings to set specific MFT as a '2nd page'. When set in this
 control tracks which numbers are in parens.
 (When in extender mode, bank buttons stays to the right, so you can have them side-by-side)
 
-| Knob | Twist                    | Click                     | Hold & Twist     | Long Press       | RGB Light                         |
-| ---- | ------------------------ | ------------------------- | ---------------- | ---------------- | --------------------------------- |
-| 1-4  | Send 1 track 1-4 (5-8)   | -                         |  -               | -                | Follow track color                |
-| 5-8  | Send 2 track 1-4 (5-8)   | Arm                       |  -               | -                | Follow track color & arm status   |
-| 9-12 | Send 3 track 1-4 (5-8)   | Solo                      |  -               | -                | Follow track color & solo status  |
-| 13-16| Track volume 1-4 (5-8)   | Mute                      |  Pan             | -                | Follow track color & mute status  |
-| 3    | ...                      | Previous 8-track page     |  -               | Navigate group   | -                                 |
-| 4    | ...                      | Next 8-track page         |  -               | Navigate group   | -                                 |
+| Knob | Twist                    | Click                     | Hold & Twist     | Long Press       | RGB Light                        |
+| ---- | ------------------------ | ------------------------- | ---------------- | ---------------- | -------------------------------- |
+| 1-4  | Send 1 track 1-4 (5-8)   | -                         |  Scroll tracks   | -                | Follow send color                |
+| 5-8  | Send 2 track 1-4 (5-8)   | Arm                       |  -               | -                | Follow send color & arm status   |
+| 9-12 | Send 3 track 1-4 (5-8)   | Solo (Enter in a group)   |  -               | Exit group       | Follow send color & solo status  |
+| 13-16| Track volume 1-4 (5-8)   | Mute                      |  Pan             | -                | Follow track color & mute status |
+| 3    | ...                      | Previous 8-track page     |  -               | -                | -                                |
+| 4    | ...                      | Next 8-track page         |  -               | -                | -                                |
 
 No further pages are planned here, if you get n-pages to work, please open an issue. :smile:
 
@@ -164,9 +164,9 @@ Please refer to [Specific device section](#specific-device-settings) to set it u
 Those knobs pages are taken over by EQ and Specific Device assign.
 MFT will handle "only" 4 banks.
 
-| Knob | Twist               | Hold & Twist    | Double Click      | RGB Light       |
-| ---- | ------------------- | --------------- | ----------------- | --------------- |
-| 1-16 | Mapped parameter(s) | Set light color | Reset light color | User selectable |
+| Knob | Twist               | Hold & Twist               | Double Click      | RGB Light        |
+| ---- | ------------------- | -------------------------- | ----------------- | ---------------- |
+| 1-16 | Mapped parameter(s) | Set light color (see bugs) | Reset light color | currently broken |
 
 | Side Button  | Action        |
 | ------------ | ------------- |
@@ -176,6 +176,11 @@ MFT will handle "only" 4 banks.
 | Right Side 1 | Previous bank |
 | Right Side 2 | Next bank     |
 | Right Side 3 | Go to bank 1  |
+
+#### Bugs
+
+the per-project settings are broken in a strange way, probably on bitwig side, which breaks knobs
+color settings (only in user mapping banks, the rest is working as expected).
 
 ## Options
 
