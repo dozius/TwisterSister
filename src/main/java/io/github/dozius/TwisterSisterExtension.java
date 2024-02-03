@@ -511,6 +511,10 @@ public class TwisterSisterExtension extends ControllerExtension
                                                                                                   TwisterKnob knob,
                                                                                                   OnOffColorSupplier colorSupplier)
   {
+    if (settings == null) {
+      return;
+    }
+
     for (final SettingType setting : settings) {
       if (setting.parameters().get(key) == null) {
         continue;
