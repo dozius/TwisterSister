@@ -134,13 +134,6 @@
                   </excludes>
                 </filter>
               </filters>
-              <relocations>
-                <relocation>
-                  <!-- Relocate Antlr to avoid conflicts with Bitwig -->
-                  <pattern>org.antlr</pattern>
-                  <shadedPattern>org.tomlj.internal.antlr</shadedPattern>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
