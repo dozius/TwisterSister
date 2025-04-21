@@ -13,8 +13,8 @@ User documentation, including installation instructions, can be found [here](doc
 
 ### Requirements
 
-- [OpenJDK 12.x](https://adoptopenjdk.net/releases.html?variant=openjdk12)
-- [Maven >= 3.1.0](https://maven.apache.org/)
+- [OpenJDK 21 LTS](https://adoptium.net/)
+- [Maven >= 3.9.9](https://maven.apache.org/)
 
 ### Build and install
 
