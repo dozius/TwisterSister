@@ -159,6 +159,12 @@ public class TwisterSisterExtension extends ControllerExtension
     twister.setPopupEnabled(popupEnabled.get());
     popupEnabled.addValueObserver(twister::setPopupEnabled);
 
+    // Use default or swapped group folding behaviour
+    final SettableBooleanValue swapGroupFolding = preferences.getBooleanSetting("Swap Group Folding",
+                                                                                "Options", false);
+    twister.setGroupFoldingSwapped(swapGroupFolding.get());
+    swapGroupFolding.addValueObserver(twister::setGroupFoldingSwapped);
+
     // Set the color used for the row of controls related to devices, i.e. second row
     final SettableRangedValue deviceRowColor = preferences.getNumberSetting("Device Row Color",
                                                                             "Options", 0, 125, 1,
@@ -279,8 +285,10 @@ public class TwisterSisterExtension extends ControllerExtension
     selectionKnob.ringLight().observeValue(new CursorNormalizedValue(cursorTrack, trackBank));
     selectionKnob.rgbLight().setColorSupplier(cursorTrack.color());
     selectionKnob.button().setShiftButton(shiftButton);
-    selectionKnob.button().addClickedObserver(() -> trackGroupNavigator.navigateGroups(true));
-    selectionKnob.button().addShiftClickedObserver(() -> trackGroupNavigator.navigateGroups(false));
+    selectionKnob.button()
+                 .addClickedObserver(() -> trackGroupNavigator.navigateGroups(!twister.IsGroupFoldingSwapped()));
+    selectionKnob.button()
+                 .addShiftClickedObserver(() -> trackGroupNavigator.navigateGroups(twister.IsGroupFoldingSwapped()));
     selectionKnob.button().addLongPressedObserver(cursorTrack.isPinned()::toggle);
     selectionKnob.button().addShiftLongPressedObserver(cursorTrack.arm()::toggle);
     bindPinnedInidcator(cursorTrack, selectionKnob.rgbLight());

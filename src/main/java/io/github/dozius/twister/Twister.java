@@ -68,6 +68,7 @@ public class Twister
   private final ControllerHost host;
 
   private boolean popupEnabled = false;
+  private boolean isGroupFoldingSwapped = false;
   private int activeBank = -1;
 
   /**
@@ -144,6 +145,24 @@ public class Twister
   public void setPopupEnabled(boolean enabled)
   {
     popupEnabled = enabled;
+  }
+
+  /**
+   * Swaps the group folding behaviour when holding shift.
+   *
+   * @param swap True to swap behaviour, false to use the default behaviour.
+   */
+  public void setGroupFoldingSwapped(boolean swap)
+  {
+    isGroupFoldingSwapped = swap;
+  }
+
+  /**
+   * @return True if swap is enabled; otherwise false.
+   */
+  public boolean IsGroupFoldingSwapped()
+  {
+    return isGroupFoldingSwapped;
   }
 
   /** Turns off all lights on the Twister. */

@@ -7,11 +7,12 @@ A Bitwig Studio controller extension for the
 
 - [Installation](#installation)
 - [Hardware](#hardware)
-  - [Track & Device Bank (Bank 1)](#track--device-bank-bank-1)
+  - [Track \& Device Bank (Bank 1)](#track--device-bank-bank-1)
     - [Notes](#notes)
   - [User Mappable Bank (Bank 2-4)](#user-mappable-bank-bank-2-4)
 - [Options](#options)
   - [Show Bank Popup](#show-bank-popup)
+  - [Swap Group Folding](#swap-group-folding)
   - [Device Row Color](#device-row-color)
   - [Global Fine Sensitivity](#global-fine-sensitivity)
   - [Pinned Indication](#pinned-indication)
@@ -121,6 +122,11 @@ the controller settings in the Bitwig Studio dashboard.
 
 Enable/disable showing a popup notification when banks are changed.
 
+### Swap Group Folding
+
+By default groups will be folded while navigating unless shift is held. Enabling this swaps this
+behaviour.
+
 ### Device Row Color
 
 Sets the color used for knobs 5-8 in the [track & device bank](#Track-&-Device-Bank-(Bank-1)). This
@@ -136,7 +142,9 @@ movement.
 Sets the light animation that will be used to indicate when a track or device is pinned. These
 animations are described in the twister user manual.
 
-When a track or device is pinned, the MIDI Fighter Twister will not follow the current track or device selected with the mouse or another controller. Info about the state of a pinned track or device is available in the Studio I/O panel in Bitwig Studio.
+When a track or device is pinned, the MIDI Fighter Twister will not follow the current track or
+device selected with the mouse or another controller. Info about the state of a pinned track or
+device is available in the Studio I/O panel in Bitwig Studio.
 
 ## Project Settings
 
