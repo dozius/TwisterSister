@@ -1,7 +1,7 @@
 # Twister Sister Bitwig Controller Extension
 
 [![Download](https://img.shields.io/github/downloads/dozius/TwisterSister/total.svg)](https://github.com/dozius/TwisterSister/releases/latest)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.me/cisc)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.com/donate/?hosted_button_id=A428TASZKK9QC)
 
 This is the source code repository for the Twister Sister Bitwig controller extension.
 
