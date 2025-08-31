@@ -14,6 +14,7 @@ A Bitwig Studio controller extension for the
   - [Show Bank Popup](#show-bank-popup)
   - [Swap Group Folding](#swap-group-folding)
   - [Device Row Color](#device-row-color)
+  - [Global Sensitivity](#global-sensitivity)
   - [Global Fine Sensitivity](#global-fine-sensitivity)
   - [Pinned Indication](#pinned-indication)
 - [Project Settings](#project-settings)
@@ -88,7 +89,7 @@ A Bitwig Studio controller extension for the
 - If a device or parameter does not exist in the current context then the corresponding lights will
   be off.
 
-- See the section on [specific device settings](#Specific-Device-Settings) for information on
+- See the section on [specific device settings](#specific-device-settings) for information on
   configuring knobs 7 and 8.
 
 - To activate the shift actions hold the "shift" side button.
@@ -129,8 +130,12 @@ behaviour.
 
 ### Device Row Color
 
-Sets the color used for knobs 5-8 in the [track & device bank](#Track-&-Device-Bank-(Bank-1)). This
-uses the same color values as the [user mappable knobs](#User-Mappable-Knob-Colors).
+Sets the color used for knobs 5-8 in the [track & device bank](#track--device-bank-bank-1). This
+uses the same color values as the [user mappable knobs](#user-mappable-knob-colors).
+
+### Global Sensitivity
+
+Sets the sensitivity factor for all encoder controls. The lower the number, the finer the movement.
 
 ### Global Fine Sensitivity
 
@@ -148,8 +153,8 @@ device is available in the Studio I/O panel in Bitwig Studio.
 
 ## Project Settings
 
-These are per project settings and will be saved with each project. They are accessed in the I/O
-panel of Bitwig Studio.
+These are per project settings and will be saved with each project. They are accessed in the
+controller drop down menu.
 
 ![project-settings](images/project-settings.png)
 
@@ -167,7 +172,7 @@ software._
 ## Specific Device Settings
 
 The specific device feature allows you to assign two device specific parameters to knobs 7 and 8 in
-the [track & device bank](#Track-&-Device-Bank-(Bank-1)). These follow the selected device.
+the [track & device bank](#track--device-bank-bank-1). These follow the selected device.
 
 The settings file `SpecificDeviceSettings.toml` allows you to configure which parameters for which
 devices will be assigned. The file is in [TOML](https://toml.io) format.
@@ -195,7 +200,7 @@ See the included `SpecificDeviceSettings.toml` file for examples.
 
 The `controls` table contains two string arrays, `knob1` and `knob2`. The strings in these arrays
 are the device parameter key names that will be assigned to the respective knob in the
-[track & device bank](#Track-&-Device-Bank-(Bank-1)).
+[track & device bank](#track--device-bank-bank-1).
 
 For example, inserting the string `"mix"` into the array will assign any parameters defined with a
 key `mix` to that knob.
