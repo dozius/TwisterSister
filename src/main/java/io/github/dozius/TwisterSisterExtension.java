@@ -173,13 +173,21 @@ public class TwisterSisterExtension extends ControllerExtension
     deviceRowColor.addValueObserver(125,
                                     (value) -> setDeviceRowColor(TwisterColors.ALL.get(value)));
 
+    // Sets the regular sensitivity factor for all knobs
+    final SettableRangedValue globalSensitivity = preferences.getNumberSetting("Global Sensitivity",
+                                                                               "Options", 0.01, 4.0,
+                                                                               0.001, null, 1.0);
+
+    setGlobalSensitivity(globalSensitivity.getRaw());
+    globalSensitivity.addRawValueObserver(this::setGlobalSensitivity);
+
     // Sets the fine sensitivity factor for all knobs
     final SettableRangedValue globalFineSensitivity = preferences.getNumberSetting("Global Fine Sensitivity",
                                                                                    "Options", 0.01,
-                                                                                   1.00, 0.01, null,
-                                                                                   0.25);
-    setGlobalFineSensitivity(globalFineSensitivity.get());
-    globalFineSensitivity.addValueObserver(this::setGlobalFineSensitivity);
+                                                                                   4.00, 0.001,
+                                                                                   null, 0.25);
+    setGlobalFineSensitivity(globalFineSensitivity.getRaw());
+    globalFineSensitivity.addRawValueObserver(this::setGlobalFineSensitivity);
 
     // Sets the indicator animation for pinned tracks/devices
     final String[] pinnedAnimationOptions = AnimationState.optionStrings();
@@ -199,6 +207,20 @@ public class TwisterSisterExtension extends ControllerExtension
     devicePageColorSupplier.setOnColor(color);
     deviceSpecific1ColorSupplier.setOnColor(color);
     deviceSpecific2ColorSupplier.setOnColor(color);
+  }
+
+  /**
+   * Sets the sensitivity factor for all controls
+   *
+   * @param factor Sensitivity factor to use.
+   */
+  private void setGlobalSensitivity(double factor)
+  {
+    for (Twister.Bank bank : twister.banks) {
+      for (TwisterKnob knob : bank.knobs) {
+        knob.setSensitivity(factor);
+      }
+    }
   }
 
   /**
